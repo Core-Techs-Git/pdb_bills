@@ -1,3 +1,4 @@
+import {resolve} from 'path';
 import * as moment from 'moment';
 import {parseString} from 'xml2js';
 import * as requester from '@core-techs-git/pdb_requester';
@@ -19,8 +20,6 @@ export class Docapost implements ArchiveStartegyInterface {
    * @access protected
    */
   protected requestOptions: RequestOptionsDTO = {
-    host: process.env.DOCAPOST_HOST,
-    path: process.env.DOCAPOST_PATH,
     headers: {
       'Content-type': 'text/xml',
     },
@@ -36,16 +35,31 @@ export class Docapost implements ArchiveStartegyInterface {
   protected requester: RequesterInterface = requester('docapost');
 
   /**
+   * Request send to docaposte.
+   * @access protected
+   */
+  protected config;
+
+  constructor() {
+    try {
+      const configPath = resolve(process.cwd(), 'config.js');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const config = require(configPath);
+      this.config = config.bills;
+      this.requestOptions = {
+        host: config.bills.docapost.host,
+        path: config.bills.docapost.path,
+      };
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+  /**
    * Authentication to docaposte service.
    * @returns {Promise<string>} A token in case of successful authentication.
    */
   protected async authenticate(): Promise<string> {
     return new Promise<string>((resolve, reject): void => {
-      if (process.env.DOCAPOST_HOST === undefined) return reject(new Error('Missing environment variable <DOCAPOST_HOST>.'));
-      if (process.env.DOCAPOST_PATH === undefined) return reject(new Error('Missing environment variable <DOCAPOST_PATH>.'));
-      if (process.env.DOCAPOST_USER === undefined) return reject(new Error('Missing environment variable <DOCAPOST_USER>.'));
-      if (process.env.DOCAPOST_PASSWORD === undefined) return reject(new Error('Missing environment variable <DOCAPOST_PASSWORD>.'));
-
       this.requester.request(
         Object.assign(this.requestOptions, {
           body: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
@@ -63,8 +77,8 @@ export class Docapost implements ArchiveStartegyInterface {
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
             <SOAP-ENV:Body>
               <mns1:serviceAUTH xmlns:mns1="http://archiv-e-service/soap/">
-                <user>${process.env.DOCAPOST_USER}</user>
-                <password>${process.env.DOCAPOST_PASSWORD}</password>
+                <user>${this.config.docapost.user}</user>
+                <password>${this.config.docapost.password}</password>
               </mns1:serviceAUTH>
             </SOAP-ENV:Body>
           </SOAP-ENV:Envelope>`,
@@ -155,7 +169,6 @@ export class Docapost implements ArchiveStartegyInterface {
                   </soap:serviceSEARCH>
                 </soapenv:Body>
               </soapenv:Envelope>`,
-              proxy: process.env.http_proxy,
             }),
             (err, data) => {
               if (err) return reject(err);
