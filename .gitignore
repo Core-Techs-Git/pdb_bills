@@ -39,4 +39,4 @@ Thumbs.db
 desktop.ini
 
 # Build dir
-dist
+#dist
