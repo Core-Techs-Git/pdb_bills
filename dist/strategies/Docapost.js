@@ -50,7 +50,7 @@ let Docapost = class Docapost {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             this.config = require(configPath).bills;
             this.requestOptions = Object.assign(this.requestOptions, {
-                uri: this.config.bills.docapost.uri,
+                uri: this.config.docapost.uri,
             });
         }
         catch (err) {
