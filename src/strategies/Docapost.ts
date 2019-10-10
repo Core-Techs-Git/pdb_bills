@@ -3,8 +3,6 @@ import * as moment from 'moment';
 import {parseString} from 'xml2js';
 import * as requester from '@core-techs-git/pdb_requester';
 import {RequestAPI, Request, UriOptions, CoreOptions, RequiredUriUrl} from 'request';
-import {RequestOptionsDTO} from '@core-techs-git/pdb_requester/dist/models';
-import {RequesterInterface} from '@core-techs-git/pdb_requester/dist/services';
 
 import {ArchiveStartegyInterface} from '.';
 import {DocumentDTO, SearchOptionsDTO} from '../models';
@@ -46,7 +44,7 @@ export class Docapost implements ArchiveStartegyInterface {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       this.config = require(configPath).bills;
       this.requestOptions = Object.assign(this.requestOptions, {
-        uri: this.config.bills.docapost.uri,
+        uri: this.config.docapost.uri,
       });
     } catch (err) {
       throw new Error(err);
