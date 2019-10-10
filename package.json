@@ -35,7 +35,7 @@
     "registry": "https://npm.pkg.github.com/"
   },
   "dependencies": {
-    "@core-techs-git/pdb_requester": "git+ssh://git@github.com/Core-Techs-Git/pdb_requester.git#master",
+    "@core-techs-git/pdb_requester": "git+https://git@github.com/Core-Techs-Git/pdb_requester.git#master",
     "inversify": "^5.0.1",
     "moment": "^2.24.0",
     "reflect-metadata": "^0.1.13",
