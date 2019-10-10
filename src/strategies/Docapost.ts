@@ -2,6 +2,7 @@ import {resolve} from 'path';
 import * as moment from 'moment';
 import {parseString} from 'xml2js';
 import * as requester from '@core-techs-git/pdb_requester';
+import {RequestAPI, Request, UriOptions, CoreOptions, RequiredUriUrl} from 'request';
 import {RequestOptionsDTO} from '@core-techs-git/pdb_requester/dist/models';
 import {RequesterInterface} from '@core-techs-git/pdb_requester/dist/services';
 
@@ -19,20 +20,19 @@ export class Docapost implements ArchiveStartegyInterface {
    * @typedef RequestOptionsDTO
    * @access protected
    */
-  protected requestOptions: RequestOptionsDTO = {
+  protected requestOptions: UriOptions & CoreOptions = {
+    uri: '',
     headers: {
       'Content-type': 'text/xml',
     },
-    body: '',
-    method: 'POST',
   };
 
   /**
    * Request send to docaposte.
-   * @typedef RequestOptionsDTO
+   * @typedef RequestAPI<Request, CoreOptions, RequiredUriUrl>
    * @access protected
    */
-  protected requester: RequesterInterface = requester('docapost');
+  protected requester: RequestAPI<Request, CoreOptions, RequiredUriUrl> = requester('docapost');
 
   /**
    * Request send to docaposte.
@@ -44,11 +44,9 @@ export class Docapost implements ArchiveStartegyInterface {
     try {
       const configPath = resolve(process.cwd(), 'config.js');
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const config = require(configPath);
-      this.config = config.bills;
+      this.config = require(configPath).bills;
       this.requestOptions = Object.assign(this.requestOptions, {
-        host: config.bills.docapost.host,
-        path: config.bills.docapost.path,
+        uri: this.config.bills.docapost.uri,
       });
     } catch (err) {
       throw new Error(err);
@@ -60,40 +58,36 @@ export class Docapost implements ArchiveStartegyInterface {
    */
   protected async authenticate(): Promise<string> {
     return new Promise<string>((resolve, reject): void => {
-      this.requester.request(
-        Object.assign(this.requestOptions, {
-          body: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-          <SOAP-ENV:Envelope
-          xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
-          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-          xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
-          xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-          xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-          xmlns:tns="http://archiv-e-service/soap/"
-          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-          xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
-          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
-            <SOAP-ENV:Body>
-              <mns1:serviceAUTH xmlns:mns1="http://archiv-e-service/soap/">
-                <user>${this.config.docapost.user}</user>
-                <password>${this.config.docapost.password}</password>
-              </mns1:serviceAUTH>
-            </SOAP-ENV:Body>
-          </SOAP-ENV:Envelope>`,
-        }),
-        (err, data) => {
-          if (err) reject(err);
-          try {
-            const findToken: string = data.split('token')[1].substring(1);
-            const token: string = findToken.substring(0, findToken.length - 2);
-            resolve(token);
-          } catch (err) {
-            reject(new Error('Authentication failed.'));
-          }
-        },
-      );
+      this.requestOptions.body = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <SOAP-ENV:Envelope
+      xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
+      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+      xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
+      xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+      xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+      xmlns:tns="http://archiv-e-service/soap/"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+      xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+        <SOAP-ENV:Body>
+          <mns1:serviceAUTH xmlns:mns1="http://archiv-e-service/soap/">
+            <user>${this.config.docapost.user}</user>
+            <password>${this.config.docapost.password}</password>
+          </mns1:serviceAUTH>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>`;
+      this.requester.post(this.requestOptions, (err, response, data) => {
+        if (err) reject(err);
+        try {
+          const findToken: string = data.split('token')[1].substring(1);
+          const token: string = findToken.substring(0, findToken.length - 2);
+          resolve(token);
+        } catch (err) {
+          reject(new Error('Authentication failed.'));
+        }
+      });
     });
   }
 
@@ -102,7 +96,7 @@ export class Docapost implements ArchiveStartegyInterface {
       async (resolve, reject): Promise<void> => {
         try {
           const token = await this.authenticate();
-          this.requester.request(
+          this.requester.post(
             Object.assign(this.requestOptions, {
               body: `<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://archiv-e-service/soap/"><x:Header/>
               <x:Body><soa:serviceDOC>
@@ -112,7 +106,7 @@ export class Docapost implements ArchiveStartegyInterface {
               <soa:duplicata>true</soa:duplicata></soa:doc></soa:docset></soa:serviceDOC>
               </x:Body></x:Envelope>`,
             }),
-            (err, data) => {
+            (err, response, data) => {
               if (err) reject(err);
               parseString(data, (err, result) => {
                 if (err) return reject(err);
@@ -146,7 +140,7 @@ export class Docapost implements ArchiveStartegyInterface {
       async (resolve, reject): Promise<void> => {
         try {
           const token = await this.authenticate();
-          this.requester.request(
+          this.requester.post(
             Object.assign(this.requestOptions, {
               body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
               <soapenv:Header/>
@@ -170,7 +164,7 @@ export class Docapost implements ArchiveStartegyInterface {
                 </soapenv:Body>
               </soapenv:Envelope>`,
             }),
-            (err, data) => {
+            (err, response, data) => {
               if (err) return reject(err);
 
               parseString(data, (err: Error, result) => {
