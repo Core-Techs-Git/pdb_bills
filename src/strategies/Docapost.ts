@@ -46,10 +46,10 @@ export class Docapost implements ArchiveStartegyInterface {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const config = require(configPath);
       this.config = config.bills;
-      this.requestOptions = {
+      this.requestOptions = Object.assign(this.requestOptions, {
         host: config.bills.docapost.host,
         path: config.bills.docapost.path,
-      };
+      });
     } catch (err) {
       throw new Error(err);
     }
