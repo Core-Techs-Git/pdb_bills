@@ -1,5 +1,4 @@
-import { RequestOptionsDTO } from '@core-techs-git/pdb_requester/dist/models';
-import { RequesterInterface } from '@core-techs-git/pdb_requester/dist/services';
+import { RequestAPI, Request, UriOptions, CoreOptions, RequiredUriUrl } from 'request';
 import { ArchiveStartegyInterface } from '.';
 import { DocumentDTO, SearchOptionsDTO } from '../models';
 /**
@@ -11,13 +10,13 @@ export declare class Docapost implements ArchiveStartegyInterface {
      * @typedef RequestOptionsDTO
      * @access protected
      */
-    protected requestOptions: RequestOptionsDTO;
+    protected requestOptions: UriOptions & CoreOptions;
     /**
      * Request send to docaposte.
-     * @typedef RequestOptionsDTO
+     * @typedef RequestAPI<Request, CoreOptions, RequiredUriUrl>
      * @access protected
      */
-    protected requester: RequesterInterface;
+    protected requester: RequestAPI<Request, CoreOptions, RequiredUriUrl>;
     /**
      * Request send to docaposte.
      * @access protected

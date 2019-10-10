@@ -34,26 +34,23 @@ let Docapost = class Docapost {
          * @access protected
          */
         this.requestOptions = {
+            uri: '',
             headers: {
                 'Content-type': 'text/xml',
             },
-            body: '',
-            method: 'POST',
         };
         /**
          * Request send to docaposte.
-         * @typedef RequestOptionsDTO
+         * @typedef RequestAPI<Request, CoreOptions, RequiredUriUrl>
          * @access protected
          */
         this.requester = requester('docapost');
         try {
             const configPath = path_1.resolve(process.cwd(), 'config.js');
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const config = require(configPath);
-            this.config = config.bills;
+            this.config = require(configPath).bills;
             this.requestOptions = Object.assign(this.requestOptions, {
-                host: config.bills.docapost.host,
-                path: config.bills.docapost.path,
+                uri: this.config.bills.docapost.uri,
             });
         }
         catch (err) {
@@ -67,28 +64,27 @@ let Docapost = class Docapost {
     authenticate() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                this.requester.request(Object.assign(this.requestOptions, {
-                    body: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-          <SOAP-ENV:Envelope
-          xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
-          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-          xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
-          xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
-          xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
-          xmlns:tns="http://archiv-e-service/soap/"
-          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-          xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
-          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
-          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
-            <SOAP-ENV:Body>
-              <mns1:serviceAUTH xmlns:mns1="http://archiv-e-service/soap/">
-                <user>${this.config.docapost.user}</user>
-                <password>${this.config.docapost.password}</password>
-              </mns1:serviceAUTH>
-            </SOAP-ENV:Body>
-          </SOAP-ENV:Envelope>`,
-                }), (err, data) => {
+                this.requestOptions.body = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+      <SOAP-ENV:Envelope
+      xmlns:SOAP-ENV="http://www.w3.org/2003/05/soap-envelope"
+      xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+      xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/"
+      xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+      xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+      xmlns:tns="http://archiv-e-service/soap/"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+      xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+      xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+        <SOAP-ENV:Body>
+          <mns1:serviceAUTH xmlns:mns1="http://archiv-e-service/soap/">
+            <user>${this.config.docapost.user}</user>
+            <password>${this.config.docapost.password}</password>
+          </mns1:serviceAUTH>
+        </SOAP-ENV:Body>
+      </SOAP-ENV:Envelope>`;
+                this.requester.post(this.requestOptions, (err, response, data) => {
                     if (err)
                         reject(err);
                     try {
@@ -108,7 +104,7 @@ let Docapost = class Docapost {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const token = yield this.authenticate();
-                    this.requester.request(Object.assign(this.requestOptions, {
+                    this.requester.post(Object.assign(this.requestOptions, {
                         body: `<x:Envelope xmlns:x="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soa="http://archiv-e-service/soap/"><x:Header/>
               <x:Body><soa:serviceDOC>
               <soa:token>${token}</soa:token>
@@ -116,7 +112,7 @@ let Docapost = class Docapost {
               <soa:id>${docID}</soa:id>
               <soa:duplicata>true</soa:duplicata></soa:doc></soa:docset></soa:serviceDOC>
               </x:Body></x:Envelope>`,
-                    }), (err, data) => {
+                    }), (err, response, data) => {
                         if (err)
                             reject(err);
                         xml2js_1.parseString(data, (err, result) => {
@@ -151,7 +147,7 @@ let Docapost = class Docapost {
             return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
                 try {
                     const token = yield this.authenticate();
-                    this.requester.request(Object.assign(this.requestOptions, {
+                    this.requester.post(Object.assign(this.requestOptions, {
                         body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
               <soapenv:Header/>
                 <soapenv:Body>
@@ -173,7 +169,7 @@ let Docapost = class Docapost {
                   </soap:serviceSEARCH>
                 </soapenv:Body>
               </soapenv:Envelope>`,
-                    }), (err, data) => {
+                    }), (err, response, data) => {
                         if (err)
                             return reject(err);
                         xml2js_1.parseString(data, (err, result) => {
