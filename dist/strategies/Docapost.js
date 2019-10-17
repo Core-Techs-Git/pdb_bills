@@ -187,6 +187,17 @@ let Docapost = class Docapost {
                                 document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
                                 document.priceHt = document.MontantHT[0];
                             });
+                            // Filter according to provided date cause docapost doesn't work correctly.
+                            documents = documents.filter(doc => {
+                                if (!query.dateFrom && !query.dateTo)
+                                    return true;
+                                if (query.dateFrom && query.dateTo)
+                                    return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(moment(query.dateFrom, 'DD/MM/YY'), moment(query.dateTo, 'DD/MM/YY'));
+                                if (query.dateFrom)
+                                    return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
+                                if (query.dateTo)
+                                    return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
+                            });
                             // if livraison, then remove all ENLEVEMENT (pickup) documents
                             // Idealy we would do this in the soap request but 'livraison' documents are not identified.
                             if (query.typeLivraison === 'livraison') {
