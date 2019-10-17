@@ -181,6 +181,8 @@ let Docapost = class Docapost {
                                 return reject(new Error(validationMessage));
                             }
                             let documents = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
+                            if (!documents)
+                                return resolve([]);
                             documents.map(document => {
                                 document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
                                 document.priceHt = document.MontantHT[0];
@@ -190,8 +192,6 @@ let Docapost = class Docapost {
                             if (query.typeLivraison === 'livraison') {
                                 documents = documents.filter((doc) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
                             }
-                            if (!documents)
-                                return resolve([]);
                             resolve(documents);
                         });
                     });

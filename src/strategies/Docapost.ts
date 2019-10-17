@@ -175,6 +175,7 @@ export class Docapost implements ArchiveStartegyInterface {
                 }
 
                 let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
+                if (!documents) return resolve([]);
 
                 documents.map(document => {
                   document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
@@ -186,7 +187,6 @@ export class Docapost implements ArchiveStartegyInterface {
                 if (query.typeLivraison === 'livraison') {
                   documents = documents.filter((doc: DocumentDTO) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
                 }
-                if (!documents) return resolve([]);
                 resolve(documents);
               });
             },

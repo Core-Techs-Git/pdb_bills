@@ -21,15 +21,16 @@ let ValidateSearchOptionsDTO = class ValidateSearchOptionsDTO {
      * @returns {boolean} True if provided data is type of SearchOptionsDTO.
      */
     isValidSearchOptionsDTO(data) {
-        return !((data.start === undefined || validator.isInt(data.start, { min: 1 })) &&
-            (data.numDocument === undefined || validator.isInt(data.numDocument)) &&
-            (data.priceFrom === undefined || validator.isInt(data.priceFrom)) &&
-            (data.priceTo === undefined || validator.isInt(data.priceTo)) &&
-            (data.code_depot === undefined || validator.isInt(data.code_depot)) &&
-            (data.company_id === undefined || typeof data.company_id === 'number') &&
-            (data.dateFrom === undefined || validator.matches(data.dateFrom, /\d{2}\/\d{2}\/\d{2}/i)) &&
-            (data.dateTo === undefined || validator.matches(data.dateTo, /\d{2}\/\d{2}\/\d{2}/i)) &&
-            data.typeLivraison === undefined);
+        let isValid = true;
+        isValid = data.start ? validator.isInt(data.start, { min: 1 }) : isValid;
+        isValid = data.numDocument ? validator.isInt(data.numDocument) : isValid;
+        isValid = data.priceFrom ? validator.isInt(data.priceFrom) : isValid;
+        isValid = data.priceTo ? validator.isInt(data.priceTo) : isValid;
+        isValid = data.code_depot ? validator.isInt(data.code_depot) : isValid;
+        isValid = data.company_id ? validator.isInt(String(data.company_id)) : isValid;
+        isValid = data.dateFrom ? validator.matches(data.dateFrom, /\d{2}\/\d{2}\/\d{2}/i) : isValid;
+        isValid = data.dateTo ? validator.matches(data.dateTo, /\d{2}\/\d{2}\/\d{2}/i) : isValid;
+        return isValid;
     }
 };
 ValidateSearchOptionsDTO = __decorate([
