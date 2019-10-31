@@ -168,43 +168,47 @@ export class Docapost implements ArchiveStartegyInterface {
               parseString(data, (err: Error, result) => {
                 if (err) return reject(err);
 
-                // docapost don't send error response codes
-                const validationMessage = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
-                if (validationMessage === 'token invalid, authentication failed.') {
-                  return reject(new Error(validationMessage));
+                try {
+                  // docapost don't send error response codes
+                  const validationMessage = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
+                  if (validationMessage === 'token invalid, authentication failed.') {
+                    return reject(new Error(validationMessage));
+                  }
+
+                  let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
+                  if (!documents) return resolve([]);
+
+                  documents.map(document => {
+                    document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
+                    document.priceHt = document.MontantHT[0];
+                  });
+
+                  // Filter according to provided date cause docapost doesn't work correctly.
+                  documents = documents.filter(doc => {
+                    if (!query.dateFrom && !query.dateTo) return true;
+                    if (query.dateFrom && query.dateTo)
+                      return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(
+                        moment(query.dateFrom, 'DD/MM/YY'),
+                        moment(query.dateTo, 'DD/MM/YY'),
+                      );
+                    if (query.dateFrom) return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
+                    if (query.dateTo) return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
+                  });
+
+                  // if livraison, then remove all ENLEVEMENT (pickup) documents
+                  // Idealy we would do this in the soap request but 'livraison' documents are not identified.
+                  if (query.typeLivraison === 'livraison') {
+                    documents = documents.filter((doc: DocumentDTO) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
+                  }
+                  resolve(documents);
+                } catch (err) {
+                  return reject(new Error(`Docapost Search many failed.\n${err}`));
                 }
-
-                let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
-                if (!documents) return resolve([]);
-
-                documents.map(document => {
-                  document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
-                  document.priceHt = document.MontantHT[0];
-                });
-
-                // Filter according to provided date cause docapost doesn't work correctly.
-                documents = documents.filter(doc => {
-                  if (!query.dateFrom && !query.dateTo) return true;
-                  if (query.dateFrom && query.dateTo)
-                    return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(
-                      moment(query.dateFrom, 'DD/MM/YY'),
-                      moment(query.dateTo, 'DD/MM/YY'),
-                    );
-                  if (query.dateFrom) return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
-                  if (query.dateTo) return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
-                });
-
-                // if livraison, then remove all ENLEVEMENT (pickup) documents
-                // Idealy we would do this in the soap request but 'livraison' documents are not identified.
-                if (query.typeLivraison === 'livraison') {
-                  documents = documents.filter((doc: DocumentDTO) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
-                }
-                resolve(documents);
               });
             },
           );
         } catch (err) {
-          return reject(new Error('/factures/json. serviceSearch error.\nUne erreur est survenue, veuillez réessayer.'));
+          return reject(new Error(`Docapost Search many failed.\n${err}`));
         }
       },
     );
