@@ -10,7 +10,8 @@
     "build": "npm run clean && npm run lint && tsc",
     "prepublishOnly": "npm run build",
     "postpublish": "npm run clean",
-    "watch": "npm run build -- -w"
+    "watch": "npm run build -- -w",
+    "dev": "nodemon ./bin/dev.ts"
   },
   "keywords": [
     "pdb",
@@ -43,14 +44,20 @@
     "xml2js": "^0.4.22"
   },
   "devDependencies": {
+    "@types/express": "^4.17.2",
     "@types/node": "^12.7.8",
     "@types/validator": "^10.11.3",
     "@types/xml2js": "^0.4.5",
     "@typescript-eslint/eslint-plugin": "^2.3.1",
     "@typescript-eslint/parser": "^2.3.1",
+    "body-parser": "^1.19.0",
+    "concurrently": "^5.0.0",
     "eslint": "^6.4.0",
     "eslint-config-prettier": "^6.3.0",
+    "express": "^4.17.1",
+    "nodemon": "^1.19.4",
     "rimraf": "^3.0.0",
+    "ts-node": "^8.4.1",
     "typescript": "^3.6.3"
   }
 }

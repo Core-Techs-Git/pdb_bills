@@ -1,0 +1,93 @@
+{
+	"info": {
+		"_postman_id": "4dcfdc88-add4-455d-ab7f-a9da4c93cb2d",
+		"name": "PDB_BILLS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "serviceDoc",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"docID\": \"6010407\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/serviceDoc",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"serviceDoc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "serviceSearch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"company_id\":8014683,\n\t\"dateFrom\":\"\",\n\t\"dateTo\":\"\",\n\t\"numDocument\":\"\",\n\t\"priceFrom\":\"\",\n\t\"priceTo\":\"\",\n\t\"typeLivraison\": \"LIVRAISON\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{protocol}}://{{host}}:{{port}}/serviceSearch",
+					"protocol": "{{protocol}}",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"serviceSearch"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "c8a57b26-d42e-4741-af7b-9c76b4842e39",
+			"key": "protocol",
+			"value": "http",
+			"type": "string"
+		},
+		{
+			"id": "4845ba5c-8f80-49ec-8b51-2c5110defdfd",
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"id": "182766c9-0a92-4a59-be46-c5901af31154",
+			"key": "port",
+			"value": "3004",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

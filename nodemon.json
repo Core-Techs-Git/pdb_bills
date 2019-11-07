@@ -1,0 +1,22 @@
+{
+  "restartable": "rs",
+  "colours": true,
+  "ignore": [
+    "dist",
+    "src/test",
+    ".git",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": true,
+  "execMap": {
+    "ts": "node --inspect=12233 -r ts-node/register"
+  },
+  "watch": [
+    "src/",
+    "bin/"
+  ],
+  "env": {
+    "PORT": 3004
+  },
+  "ext": "ts"
+}

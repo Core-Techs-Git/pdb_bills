@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import {DocumentDTO, SearchOptionsDTO, Callback} from './models';
+import {DocumentDTO, SearchOptionsDTO, Callback, CallbackPDF} from './models';
 import {ArchiveInterface} from './services/Archive';
 import {inversifyContainer} from './lib';
 import {TYPES} from './const';
@@ -11,9 +11,9 @@ const archive: ArchiveInterface = inversifyContainer.get<ArchiveInterface>(TYPES
  * @param {number} docID The id of the document needed.
  * @param {Callback} callback Function to execute when the document is retreive.
  */
-export async function serviceDoc(docID: number, callback: Callback): Promise<void> {
+export async function serviceDoc(docID: number, callback: CallbackPDF): Promise<void> {
   try {
-    const doc: DocumentDTO = await archive.searchOne(docID);
+    const doc: string = await archive.searchOne(docID);
     callback(null, doc);
   } catch (err) {
     callback(err);

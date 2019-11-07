@@ -36,7 +36,7 @@ export class Archive implements ArchiveInterface {
     this.archiveStrategy = archiveStrategy;
   }
 
-  searchOne(docID: number): Promise<DocumentDTO> {
+  searchOne(docID: number): Promise<string> {
     if (isNaN(+docID)) return Promise.reject(new Error('Invalid id.'));
     else return this.archiveStrategy.searchOne(docID);
   }
@@ -60,9 +60,9 @@ export interface ArchiveInterface {
   /**
    * Search and return a document identify by his ID.
    * @param {number} docID The id of the document needed.
-   * @returns {Promise<DocumentDTO>} Retrieved document or an error.
+   * @returns {Promise<string>} Retrieved document or an error.
    */
-  searchOne(id: number): Promise<DocumentDTO>;
+  searchOne(id: number): Promise<string>;
 
   /**
    * Search and return multiple documents matching the parameters.

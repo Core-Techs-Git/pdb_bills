@@ -43,6 +43,8 @@ desktop.ini
 .eslintrc.js
 .prettierignore
 .prettierrc
+config.js
 tsconfig.json
 src
 test
+bin

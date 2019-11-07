@@ -89,8 +89,8 @@ export class Docapost implements ArchiveStartegyInterface {
     });
   }
 
-  public async searchOne(docID: number): Promise<DocumentDTO> {
-    return new Promise<DocumentDTO>(
+  public async searchOne(docID: number): Promise<string> {
+    return new Promise<string>(
       async (resolve, reject): Promise<void> => {
         try {
           const token = await this.authenticate();
@@ -121,7 +121,7 @@ export class Docapost implements ArchiveStartegyInterface {
                   return reject(err);
                 }
                 if (err) return reject(err);
-                const doc: DocumentDTO = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
+                const doc: string = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
                 resolve(doc);
               });
             },
@@ -185,6 +185,7 @@ export class Docapost implements ArchiveStartegyInterface {
 
                   // Filter according to provided date cause docapost doesn't work correctly.
                   documents = documents.filter(doc => {
+                    if (query.typeLivraison === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
                     if (!query.dateFrom && !query.dateTo) return true;
                     if (query.dateFrom && query.dateTo)
                       return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(

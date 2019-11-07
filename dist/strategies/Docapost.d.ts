@@ -28,6 +28,6 @@ export declare class Docapost implements ArchiveStartegyInterface {
      * @returns {Promise<string>} A token in case of successful authentication.
      */
     protected authenticate(): Promise<string>;
-    searchOne(docID: number): Promise<DocumentDTO>;
+    searchOne(docID: number): Promise<string>;
     searchMany(query: SearchOptionsDTO): Promise<Array<DocumentDTO>>;
 }
