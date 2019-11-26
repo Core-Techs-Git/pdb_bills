@@ -4,6 +4,7 @@ import {TYPES, VALIDATORS} from '../const';
 import {ValidatorInterface} from './validator';
 import {SearchOptionsDTO, DocumentDTO} from '../models';
 import {ArchiveStartegyInterface} from '../strategies';
+import {ValidationError} from './error';
 
 /**
  * Provid an api to retrieve stored documents.
@@ -37,12 +38,12 @@ export class Archive implements ArchiveInterface {
   }
 
   searchOne(docID: number): Promise<string> {
-    if (isNaN(+docID)) return Promise.reject(new Error('Invalid id.'));
+    if (isNaN(+docID)) return Promise.reject(new ValidationError(`Invalid docID ${docID}.`));
     else return this.archiveStrategy.searchOne(docID);
   }
 
   searchMany(options: SearchOptionsDTO): Promise<Array<DocumentDTO>> {
-    if (!this.validator.isValid(options)) return Promise.reject(new Error('Invalid request options'));
+    if (!this.validator.isValid(options)) return Promise.reject(new ValidationError(`Invalid request options – ${options}`));
     else return this.archiveStrategy.searchMany(options);
   }
 }

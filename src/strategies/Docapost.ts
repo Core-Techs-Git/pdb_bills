@@ -7,6 +7,7 @@ import {RequestAPI, Request, UriOptions, CoreOptions, RequiredUriUrl} from 'requ
 import {ArchiveStartegyInterface} from '.';
 import {DocumentDTO, SearchOptionsDTO} from '../models';
 import {injectable} from 'inversify';
+import {BillError, AuthenticationError} from '../services/error';
 
 /**
  * Implement docapost service as an archive strategy
@@ -47,7 +48,7 @@ export class Docapost implements ArchiveStartegyInterface {
         uri: this.config.docapost.uri,
       });
     } catch (err) {
-      throw new Error(err);
+      throw new BillError(err);
     }
   }
   /**
@@ -83,7 +84,7 @@ export class Docapost implements ArchiveStartegyInterface {
           const token: string = findToken.substring(0, findToken.length - 2);
           resolve(token);
         } catch (err) {
-          reject(new Error('Authentication failed.'));
+          reject(new AuthenticationError(`Authentication failed\nerror object – ${err}`));
         }
       });
     });
@@ -105,29 +106,31 @@ export class Docapost implements ArchiveStartegyInterface {
               </x:Body></x:Envelope>`,
             }),
             (err, response, data) => {
-              if (err) reject(err);
+              if (err) return reject(new BillError(err));
+
               parseString(data, (err, result) => {
-                if (err) return reject(err);
+                if (err) return reject(new BillError(err));
 
                 let message = '';
                 try {
                   message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].message[0];
                 } catch (e) {
-                  // do nothing
+                  return new BillError(e);
                 }
 
-                if (message === 'token invalid, authentication failed.') {
-                  const err = new Error(message);
-                  return reject(err);
+                if (message === 'token invalid, authentication failed.') return reject(new AuthenticationError(message));
+
+                try {
+                  const doc: string = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
+                  resolve(doc);
+                } catch (error) {
+                  reject(new BillError(error));
                 }
-                if (err) return reject(err);
-                const doc: string = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
-                resolve(doc);
               });
             },
           );
         } catch (err) {
-          return reject(new Error('Authentication to docaposte failed.'));
+          return reject(err);
         }
       },
     );
@@ -163,17 +166,15 @@ export class Docapost implements ArchiveStartegyInterface {
               </soapenv:Envelope>`,
             }),
             (err, response, data) => {
-              if (err) return reject(err);
+              if (err) return reject(new BillError(err));
 
               parseString(data, (err: Error, result) => {
-                if (err) return reject(err);
+                if (err) return reject(new BillError(err));
 
                 try {
                   // docapost don't send error response codes
                   const validationMessage = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
-                  if (validationMessage === 'token invalid, authentication failed.') {
-                    return reject(new Error(validationMessage));
-                  }
+                  if (validationMessage === 'token invalid, authentication failed.') return reject(new AuthenticationError(validationMessage));
 
                   let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
                   if (!documents) return resolve([]);
@@ -185,7 +186,7 @@ export class Docapost implements ArchiveStartegyInterface {
 
                   // Filter according to provided date cause docapost doesn't work correctly.
                   documents = documents.filter(doc => {
-                    if (query.typeLivraison === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
+                    if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
                     if (!query.dateFrom && !query.dateTo) return true;
                     if (query.dateFrom && query.dateTo)
                       return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(
@@ -195,21 +196,15 @@ export class Docapost implements ArchiveStartegyInterface {
                     if (query.dateFrom) return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
                     if (query.dateTo) return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
                   });
-
-                  // if livraison, then remove all ENLEVEMENT (pickup) documents
-                  // Idealy we would do this in the soap request but 'livraison' documents are not identified.
-                  if (query.typeLivraison === 'livraison') {
-                    documents = documents.filter((doc: DocumentDTO) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
-                  }
                   resolve(documents);
                 } catch (err) {
-                  return reject(new Error(`Docapost Search many failed.\n${err}`));
+                  return reject(new BillError(err));
                 }
               });
             },
           );
         } catch (err) {
-          return reject(new Error(`Docapost Search many failed.\n${err}`));
+          return reject(err);
         }
       },
     );

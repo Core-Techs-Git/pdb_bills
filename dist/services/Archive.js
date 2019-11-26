@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
 const const_1 = require("../const");
+const error_1 = require("./error");
 /**
  * Provid an api to retrieve stored documents.
  */
@@ -27,13 +28,13 @@ let Archive = class Archive {
     }
     searchOne(docID) {
         if (isNaN(+docID))
-            return Promise.reject(new Error('Invalid id.'));
+            return Promise.reject(new error_1.ValidationError(`Invalid docID ${docID}.`));
         else
             return this.archiveStrategy.searchOne(docID);
     }
     searchMany(options) {
         if (!this.validator.isValid(options))
-            return Promise.reject(new Error('Invalid request options'));
+            return Promise.reject(new error_1.ValidationError(`Invalid request options – ${options}`));
         else
             return this.archiveStrategy.searchMany(options);
     }

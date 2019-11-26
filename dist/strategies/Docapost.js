@@ -23,6 +23,7 @@ const moment = require("moment");
 const xml2js_1 = require("xml2js");
 const requester = require("@core-techs-git/pdb_requester");
 const inversify_1 = require("inversify");
+const error_1 = require("../services/error");
 /**
  * Implement docapost service as an archive strategy
  */
@@ -54,7 +55,7 @@ let Docapost = class Docapost {
             });
         }
         catch (err) {
-            throw new Error(err);
+            throw new error_1.BillError(err);
         }
     }
     /**
@@ -93,7 +94,7 @@ let Docapost = class Docapost {
                         resolve(token);
                     }
                     catch (err) {
-                        reject(new Error('Authentication failed.'));
+                        reject(new error_1.AuthenticationError(`Authentication failed\nerror object – ${err}`));
                     }
                 });
             });
@@ -114,30 +115,31 @@ let Docapost = class Docapost {
               </x:Body></x:Envelope>`,
                     }), (err, response, data) => {
                         if (err)
-                            reject(err);
+                            return reject(new error_1.BillError(err));
                         xml2js_1.parseString(data, (err, result) => {
                             if (err)
-                                return reject(err);
+                                return reject(new error_1.BillError(err));
                             let message = '';
                             try {
                                 message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].message[0];
                             }
                             catch (e) {
-                                // do nothing
+                                return new error_1.BillError(e);
                             }
-                            if (message === 'token invalid, authentication failed.') {
-                                const err = new Error(message);
-                                return reject(err);
+                            if (message === 'token invalid, authentication failed.')
+                                return reject(new error_1.AuthenticationError(message));
+                            try {
+                                const doc = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
+                                resolve(doc);
                             }
-                            if (err)
-                                return reject(err);
-                            const doc = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceDOCRes'][0].docset[0].doc[0].data[0];
-                            resolve(doc);
+                            catch (error) {
+                                reject(new error_1.BillError(error));
+                            }
                         });
                     });
                 }
                 catch (err) {
-                    return reject(new Error('Authentication to docaposte failed.'));
+                    return reject(err);
                 }
             }));
         });
@@ -171,16 +173,15 @@ let Docapost = class Docapost {
               </soapenv:Envelope>`,
                     }), (err, response, data) => {
                         if (err)
-                            return reject(err);
+                            return reject(new error_1.BillError(err));
                         xml2js_1.parseString(data, (err, result) => {
                             if (err)
-                                return reject(err);
+                                return reject(new error_1.BillError(err));
                             try {
                                 // docapost don't send error response codes
                                 const validationMessage = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
-                                if (validationMessage === 'token invalid, authentication failed.') {
-                                    return reject(new Error(validationMessage));
-                                }
+                                if (validationMessage === 'token invalid, authentication failed.')
+                                    return reject(new error_1.AuthenticationError(validationMessage));
                                 let documents = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
                                 if (!documents)
                                     return resolve([]);
@@ -190,7 +191,7 @@ let Docapost = class Docapost {
                                 });
                                 // Filter according to provided date cause docapost doesn't work correctly.
                                 documents = documents.filter(doc => {
-                                    if (query.typeLivraison === 'LIVRAISON')
+                                    if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON')
                                         return !doc.TypeLivraison.includes('ENLEVEMENT');
                                     if (!query.dateFrom && !query.dateTo)
                                         return true;
@@ -201,21 +202,16 @@ let Docapost = class Docapost {
                                     if (query.dateTo)
                                         return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
                                 });
-                                // if livraison, then remove all ENLEVEMENT (pickup) documents
-                                // Idealy we would do this in the soap request but 'livraison' documents are not identified.
-                                if (query.typeLivraison === 'livraison') {
-                                    documents = documents.filter((doc) => doc.TypeLivraison[0] !== 'ENLEVEMENT');
-                                }
                                 resolve(documents);
                             }
                             catch (err) {
-                                return reject(new Error(`Docapost Search many failed.\n${err}`));
+                                return reject(new error_1.BillError(err));
                             }
                         });
                     });
                 }
                 catch (err) {
-                    return reject(new Error(`Docapost Search many failed.\n${err}`));
+                    return reject(err);
                 }
             }));
         });
