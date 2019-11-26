@@ -6,6 +6,7 @@
     "module": "commonjs",
     "target": "es6",
     "declaration": true,
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
@@ -19,6 +20,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
+      "@pdb_bills/*": [
+        "src/*"
+      ],
       "*": [
         "node_modules/*"
       ]
@@ -30,7 +34,6 @@
   "exclude": [
     "bin",
     "node_modules",
-    "dist",
-    "test"
+    "dist"
   ]
 }

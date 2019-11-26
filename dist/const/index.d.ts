@@ -1,3 +1,3 @@
 export * from './types';
-export * from './strategies';
+export * from './archive';
 export * from './validators';

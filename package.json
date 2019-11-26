@@ -35,9 +35,14 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
   },
+  "_moduleAliases": {
+    "@pdb_bills": "dist/"
+  },
   "dependencies": {
-    "@core-techs-git/pdb_requester": "git+https://git@github.com/Core-Techs-Git/pdb_requester.git#master",
+    "@core-techs-git/pdb_requester": "git+https://git@github.com/Core-Techs-Git/pdb_requester.git#tests-setup",
+    "@types/module-alias": "^2.0.0",
     "inversify": "^5.0.1",
+    "module-alias": "^2.2.2",
     "moment": "^2.24.0",
     "reflect-metadata": "^0.1.13",
     "validator": "^11.1.0",

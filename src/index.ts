@@ -1,22 +1,28 @@
 import 'reflect-metadata';
-import {DocumentDTO, SearchOptionsDTO, Callback, CallbackPDF} from './models';
-import {ArchiveInterface} from './services/Archive';
-import {inversifyContainer} from './lib';
-import {TYPES} from './const';
+import 'module-alias/register';
 
-const archive: ArchiveInterface = inversifyContainer.get<ArchiveInterface>(TYPES.ArchiveInterface);
+import {TYPES, ARCHIVE} from '@pdb_bills/const';
+import {inversifyContainer} from '@pdb_bills/lib';
+import {SearchOptionsDTO} from '@pdb_bills/models';
+import {ArchiveInterface, BillError, ValidationError} from '@pdb_bills/services';
 
 /**
  * Search and return a document identify by his ID.
  * @param {number} docID The id of the document needed.
  * @param {Callback} callback Function to execute when the document is retreive.
  */
-export async function serviceDoc(docID: number, callback: CallbackPDF): Promise<void> {
+export function serviceDoc(docID: number, callback: CallableFunction, archiveName?: string): void {
+  if (archiveName && !Object.values(ARCHIVE).includes(archiveName))
+    return callback(new ValidationError(`Invalid archiveName option – ${archiveName}`));
+
   try {
-    const doc: string = await archive.searchOne(docID);
-    callback(null, doc);
-  } catch (err) {
-    callback(err);
+    const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
+    archive.searchOne(docID).then(doc => {
+      callback(null, doc);
+    });
+  } catch (error) {
+    if (error instanceof BillError) callback(error);
+    else callback(new BillError(error));
   }
 }
 
@@ -25,11 +31,17 @@ export async function serviceDoc(docID: number, callback: CallbackPDF): Promise<
  * @param {SearchOptionsDTO} options Search parameters for multiple documents.
  * @param {Callback} callback Functions to execute when documents are retrieve.
  */
-export async function serviceSearch(options: SearchOptionsDTO, callback: Callback): Promise<void> {
+export function serviceSearch(options: SearchOptionsDTO, callback: CallableFunction, archiveName?: string): void {
+  if (archiveName && !Object.values(ARCHIVE).includes(archiveName))
+    return callback(new ValidationError(`Invalid archiveName option – ${archiveName}`));
+
   try {
-    const docs: Array<DocumentDTO> = await archive.searchMany(options);
-    callback(null, docs);
-  } catch (err) {
-    callback(err);
+    const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
+    archive.searchMany(options).then(docs => {
+      callback(null, docs);
+    });
+  } catch (error) {
+    if (error instanceof BillError) callback(error);
+    else callback(new BillError(error));
   }
 }

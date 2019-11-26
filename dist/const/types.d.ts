@@ -1,5 +1,6 @@
 export declare const TYPES: {
     ArchiveInterface: symbol;
-    ArchiveStartegyInterface: symbol;
+    ConfigurationInterface: symbol;
+    Requester: symbol;
     ValidatorInterface: symbol;
 };
