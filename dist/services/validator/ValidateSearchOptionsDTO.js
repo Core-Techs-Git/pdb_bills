@@ -28,8 +28,8 @@ let ValidateSearchOptionsDTO = class ValidateSearchOptionsDTO {
         const priceTo = data.priceTo ? validator.isInt(data.priceTo) : true;
         const code_depot = data.code_depot ? validator.isInt(data.code_depot) : true;
         const company_id = data.company_id ? validator.isInt(String(data.company_id)) : true;
-        const dateFrom = data.dateFrom ? validator.matches(data.dateFrom, /\d{2}\/\d{2}\/\d{2}/i) : true;
-        const dateTo = data.dateTo ? validator.matches(data.dateTo, /\d{2}\/\d{2}\/\d{2}/i) : true;
+        const dateFrom = data.dateFrom ? Boolean(validator.toDate(data.dateFrom)) : true;
+        const dateTo = data.dateTo ? Boolean(validator.toDate(data.dateTo)) : true;
         return start && numDocument && priceFrom && priceTo && code_depot && company_id && dateFrom && dateTo;
     }
 };

@@ -186,7 +186,6 @@ export class Docapost implements ArchiveStartegyInterface {
 
                   // Filter according to provided date cause docapost doesn't work correctly.
                   documents = documents.filter(doc => {
-                    if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
                     if (!query.dateFrom && !query.dateTo) return true;
                     if (query.dateFrom && query.dateTo)
                       return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(
@@ -195,6 +194,9 @@ export class Docapost implements ArchiveStartegyInterface {
                       );
                     if (query.dateFrom) return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
                     if (query.dateTo) return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
+                  });
+                  documents = documents.filter(doc => {
+                    if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
                   });
                   resolve(documents);
                 } catch (err) {
