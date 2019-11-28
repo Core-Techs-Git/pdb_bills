@@ -197,6 +197,7 @@ export class Docapost implements ArchiveStartegyInterface {
                   });
                   documents = documents.filter(doc => {
                     if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
+                    return true;
                   });
                   resolve(documents);
                 } catch (err) {

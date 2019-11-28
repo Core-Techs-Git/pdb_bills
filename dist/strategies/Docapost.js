@@ -203,6 +203,7 @@ let Docapost = class Docapost {
                                 documents = documents.filter(doc => {
                                     if (query.typeLivraison && query.typeLivraison.toUpperCase() === 'LIVRAISON')
                                         return !doc.TypeLivraison.includes('ENLEVEMENT');
+                                    return true;
                                 });
                                 resolve(documents);
                             }
