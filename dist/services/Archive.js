@@ -34,7 +34,7 @@ let Archive = class Archive {
     }
     searchMany(options) {
         if (!this.validator.isValid(options))
-            return Promise.reject(new error_1.ValidationError(`Invalid request options – ${options}`));
+            return Promise.reject(new error_1.ValidationError(`Invalid request options – ${JSON.stringify(options)}`));
         else
             return this.archiveStrategy.searchMany(options);
     }

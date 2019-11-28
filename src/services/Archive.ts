@@ -43,7 +43,7 @@ export class Archive implements ArchiveInterface {
   }
 
   searchMany(options: SearchOptionsDTO): Promise<Array<DocumentDTO>> {
-    if (!this.validator.isValid(options)) return Promise.reject(new ValidationError(`Invalid request options – ${options}`));
+    if (!this.validator.isValid(options)) return Promise.reject(new ValidationError(`Invalid request options – ${JSON.stringify(options)}`));
     else return this.archiveStrategy.searchMany(options);
   }
 }
