@@ -141,6 +141,14 @@ export class Docapost implements ArchiveStartegyInterface {
       async (resolve, reject): Promise<void> => {
         try {
           const token = await this.authenticate();
+          if (/\d{2}\/\d{2}\/\d{2}/.test(query.dateFrom)) {
+            const matches = /(\d{2})\/(\d{2})\/(\d{2})/.exec(query.dateFrom);
+            query.dateFrom = `20${matches[3]}-${matches[2]}-${matches[1]}`;
+          }
+          if (/\d{2}\/\d{2}\/\d{2}/.test(query.dateTo)) {
+            const matches = /(\d{2})\/(\d{2})\/(\d{2})/.exec(query.dateTo);
+            query.dateTo = `20${matches[3]}-${matches[2]}-${matches[1]}`;
+          }
           this.requester.post(
             Object.assign(this.requestOptions, {
               body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
