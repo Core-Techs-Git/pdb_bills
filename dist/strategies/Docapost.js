@@ -189,6 +189,14 @@ let Docapost = class Docapost {
                                     document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
                                     document.priceHt = document.MontantHT[0];
                                 });
+                                if (/^\d{4}-\d{2}-\d{2}/.test(query.dateTo)) {
+                                    const matches = /(\d{2})-(\d{2})-(\d{2})/.exec(query.dateTo);
+                                    query.dateTo = `${matches[3]}/${matches[2]}/${matches[1]}`;
+                                }
+                                if (/^\d{4}-\d{2}-\d{2}/.test(query.dateFrom)) {
+                                    const matches = /(\d{2})-(\d{2})-(\d{2})/.exec(query.dateFrom);
+                                    query.dateFrom = `${matches[3]}/${matches[2]}/${matches[1]}`;
+                                }
                                 // Filter according to provided date cause docapost doesn't work correctly.
                                 documents = documents.filter(doc => {
                                     if (!query.dateFrom && !query.dateTo)
