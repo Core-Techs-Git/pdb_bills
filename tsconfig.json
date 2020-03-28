@@ -10,17 +10,20 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "removeComments": true,
     "lib": [
       "es6"
     ],
     "types": [
       "node",
+      "jest",
       "reflect-metadata"
     ],
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@pdb_bills/*": [
+      "@/*": [
+        ".",
         "src/*"
       ],
       "*": [
@@ -31,9 +34,9 @@
   "include": [
     "src"
   ],
-  "exclude": [
-    "bin",
-    "node_modules",
-    "dist"
-  ]
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs",
+    "hideGenerator": true
+  }
 }

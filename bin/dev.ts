@@ -1,5 +1,6 @@
 import express from 'express';
 import {json} from 'body-parser';
+
 import {serviceDoc, serviceSearch} from '../src';
 
 const app = express();
@@ -7,7 +8,15 @@ app.use(json());
 
 app.post('/serviceDoc', (req: express.Request, res: express.Response) => {
   serviceDoc(req.body.docID, (error, data) => {
-    if (error) res.json({data, error});
+    if (error)
+      res.json({
+        data,
+        error: {
+          name: error ? error.name : undefined,
+          message: error ? error.message : undefined,
+          stack: error ? error.stack : undefined,
+        },
+      });
     else {
       res.type('pdf');
       res.writeHead(200, {

@@ -1,19 +1,22 @@
-import {resolve} from 'path';
+/**
+ * @module lib
+ * @packageDocumentation
+ */
+
 import {Container} from 'inversify';
 import requester from '@core-techs-git/pdb_requester';
 import {RequestAPI, Request, CoreOptions, RequiredUriUrl} from 'request';
 
-import {TYPES, VALIDATORS, ARCHIVE} from '@pdb_bills/const';
-import {ConfigurationInterface, Configuration, ValidatorInterface, SearchOptionsDTOValidator, Docapost, ArchiveInterface} from '@pdb_bills/services';
+import {TYPES, VALIDATORS, ARCHIVE} from '@/const';
+import {ConfigurationInterface, Configuration, ValidatorInterface, SearchOptionsDTOValidator, Docapost, ArchiveInterface} from '@/service';
 
-const configPath = resolve(process.cwd(), 'config.js');
 const container = new Container();
 //  Define autowiring by binding interfaces to instanciated class.
 Object.keys(ARCHIVE).map(archiveName => {
   container
     .bind<ConfigurationInterface>(TYPES.ConfigurationInterface)
     .toDynamicValue(() => {
-      return new Configuration(ARCHIVE[archiveName], configPath);
+      return new Configuration(ARCHIVE[archiveName]);
     })
     .inSingletonScope()
     .whenTargetNamed(ARCHIVE[archiveName]);

@@ -1,10 +1,15 @@
-import 'reflect-metadata';
-import 'module-alias/register';
+/**
+ * @module index
+ * @packageDocumentation
+ */
 
-import {TYPES, ARCHIVE} from '@pdb_bills/const';
-import {inversifyContainer} from '@pdb_bills/lib';
-import {SearchOptionsDTO} from '@pdb_bills/models';
-import {ArchiveInterface, BillError, ValidationError} from '@pdb_bills/services';
+import 'reflect-metadata';
+
+import {TYPES, ARCHIVE} from '@/const';
+import {inversifyContainer} from '@/lib';
+import {SearchOptionsDTO} from '@/model';
+import {ArchiveInterface} from '@/service';
+import {BillError, ValidationError} from '@/error';
 
 /**
  * Search and return a document identify by his ID.
@@ -17,9 +22,15 @@ export function serviceDoc(docID: number, callback: CallableFunction, archiveNam
 
   try {
     const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
-    archive.searchOne(docID).then(doc => {
-      callback(null, doc);
-    });
+    archive
+      .searchOne(docID)
+      .then(doc => {
+        callback(null, doc);
+      })
+      .catch(err => {
+        if (err instanceof BillError) callback(err);
+        else callback(new BillError(err));
+      });
   } catch (error) {
     if (error instanceof BillError) callback(error);
     else callback(new BillError(error));
@@ -37,9 +48,15 @@ export function serviceSearch(options: SearchOptionsDTO, callback: CallableFunct
 
   try {
     const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
-    archive.searchMany(options).then(docs => {
-      callback(null, docs);
-    });
+    archive
+      .searchMany(options)
+      .then(docs => {
+        callback(null, docs);
+      })
+      .catch(err => {
+        if (err instanceof BillError) callback(err);
+        else callback(new BillError(err));
+      });
   } catch (error) {
     if (error instanceof BillError) callback(error);
     else callback(new BillError(error));
