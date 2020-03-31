@@ -39,12 +39,14 @@ Thumbs.db
 desktop.ini
 
 # No need to be in package
+bin
+docs
+src
+test
 .eslintignore
 .eslintrc.js
+.madgerc
 .prettierignore
 .prettierrc
 config.js
 tsconfig.json
-src
-test
-bin
