@@ -6,19 +6,26 @@
     "module": "commonjs",
     "target": "es6",
     "declaration": true,
+    "esModuleInterop": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "removeComments": true,
     "lib": [
       "es6"
     ],
     "types": [
       "node",
+      "jest",
       "reflect-metadata"
     ],
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": [
+        ".",
+        "src/*"
+      ],
       "*": [
         "node_modules/*"
       ]
@@ -27,10 +34,9 @@
   "include": [
     "src"
   ],
-  "exclude": [
-    "bin",
-    "node_modules",
-    "dist",
-    "test"
-  ]
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs",
+    "hideGenerator": true
+  }
 }
