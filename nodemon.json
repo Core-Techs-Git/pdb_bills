@@ -3,20 +3,22 @@
   "colours": true,
   "ignore": [
     "dist",
-    "src/test",
+    "test",
     ".git",
     "node_modules/**/node_modules"
   ],
   "verbose": true,
   "execMap": {
-    "ts": "node --inspect=12233 -r ts-node/register"
+    "ts": "node --inspect=12233 -r ts-node/register -r tsconfig-paths/register"
   },
   "watch": [
     "src/",
     "bin/"
   ],
   "env": {
-    "PORT": 3004
+    "PORT": 3004,
+    "NODE_ENV": "dev",
+    "NODE_CONFIG_DIR": "./bin/config"
   },
   "ext": "ts"
 }
