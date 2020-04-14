@@ -6,6 +6,15 @@
 
 # PDB BILLS
 
+[![Latest tag](https://img.shields.io/github/v/tag/Core-Techs-Git/pdb_bills?color=f87a15)](https://github.com/Core-Techs-Git/pdb_bills/tags)
+![Commit since latest release](https://img.shields.io/github/commits-since/Core-Techs-Git/pdb_bills/latest?color=f87a15&sort=semver)
+
+[![Built with TypeScript](https://img.shields.io/npm/v/typescript?color=007ACC&label=Typescript&logo=typescript)](https://github.com/microsoft/TypeScript)
+[![Tested with Jest](https://img.shields.io/npm/v/jest?color=C21325&label=Jest&logo=jest)](https://github.com/facebook/jest)
+[![Code Style Eslint](https://img.shields.io/npm/v/eslint?color=4B32C3&label=Eslint&logo=eslint)](https://github.com/eslint/eslint)
+[![Code Style Prettier](https://img.shields.io/npm/v/prettier?color=F7B93E&label=Prettier&logo=prettier)](https://github.com/prettier/prettier)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
 This module gather in one place all the dependencies required by **[La Plateform du bâtiment](https://www.laplateforme.com/)** projects to interact with bills document. It relays on external services like [Docapost](https://www.docaposte.com/).
 
 ## Features
@@ -41,31 +50,22 @@ $ npm i -S @core-techs-git/pdb_bills
   <p><b><i><a href="https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line">PERSONAL-ACCESS-TOKEN</a></i></b> is generated in github settings.</p>
 </details>
 
-2. Edit your configuration file _`config.js`_ (located at the root of your project) according to [pdb_requester](https://github.com/Core-Techs-Git/pdb_requester) since bills depends on it to make its requests.
+2. Edit your configurations files _`config/**.js`_ (located at the root of your project) according to [pdb_requester](https://github.com/Core-Techs-Git/pdb_requester) since bills depends on it to make its requests.
 
 ```JavaScript
 const config = {};
 ...
-config.requester = {
-  ...
-  docapost: {
-    proxy: false,
-    protocol: 'https'
-  },
-  ...
+config.docapost = {
+  proxy: false,
+  protocol: 'https',
+  host: 'externalhost.com',
+  path: '/somepath',
+  user: 'myusername',
+  password: 'mypassword'
 };
 ...
 module.exports = config;
 ```
-
-3. Defined need environment variables for [Docapost](https://www.docaposte.com/) service
-
-| Variable          | Description                                 |
-| ----------------- | ------------------------------------------- |
-| DOCAPOST_HOST     | The docapost service host string            |
-| DOCAPOST_PATH     | Path to the service end point. start with / |
-| DOCAPOST_USER     | The login string                            |
-| DOCAPOST_PASSWORD | The password string                         |
 
 4. Import the module inside your code and just use it
 
@@ -102,12 +102,4 @@ $ npm i
 ```
 
 That's it you're all setup and can start contributing :thumbsup:.
-
-## Modules and techs used
-
-[<img src="https://s.gravatar.com/avatar/3e2b342616822f8eabc9dd393840db4a?size=100&default=retro" width="100"/>](http://www.typescriptlang.org 'Typescript')&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://eslint.org/assets/img/logo.svg" width="100"/>](https://eslint.org 'Eslint')&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://avatars0.githubusercontent.com/u/11887183?s=200&v=4" width="100"/>](http://inversify.io/ 'Inversify')&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://cdn.worldvectorlogo.com/logos/jest-0.svg" width="100"/>](https://jestjs.io 'Jest')&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://www.laplateforme.com/cms/i?o=%2Fsites%2Fdefault%2Ffiles%2F2017-04%2Flogo_pdb_bsl-1.jpg" width="100"/>](https://github.com/Core-Techs-Git/pdb_requester 'PDB REQUESTER')&nbsp;&nbsp;&nbsp;&nbsp;
-[<img src="https://www.docaposte.com/bundles/docapostcore/img/header/logo-docaposte.svg" width="100"/>](https://www.docaposte.com/ 'Docapost')&nbsp;&nbsp;&nbsp;&nbsp;
+Also remember to check out our guidelines for contributing :wink:.
