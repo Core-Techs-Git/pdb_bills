@@ -13,7 +13,7 @@
     "build": "npm run clean && ttsc",
     "clean": "rimraf dist",
     "dev": "npm run clean && nodemon ./bin/dev.ts",
-    "doc": "typedoc --tsconfig --plugin typedoc-plugin-markdown",
+    "doc": "typedoc --tsconfig",
     "start": "npm run dev",
     "test": "npm run clean && jest --runInBand --silent --colors"
   },

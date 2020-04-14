@@ -42,7 +42,6 @@
     "src"
   ],
   "typedocOptions": {
-    "mode": "modules",
     "out": "docs",
     "hideGenerator": true
   }
