@@ -24,16 +24,14 @@ export function serviceDoc(docID: number, callback: CallableFunction, archiveNam
     const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
     archive
       .searchOne(docID)
-      .then(doc => {
+      .then((doc) => {
         callback(null, doc);
       })
-      .catch(err => {
-        if (err instanceof BillError) callback(err);
-        else callback(new BillError(err));
+      .catch((err) => {
+        callback(err);
       });
   } catch (error) {
-    if (error instanceof BillError) callback(error);
-    else callback(new BillError(error));
+    callback(new BillError(error));
   }
 }
 
@@ -50,15 +48,13 @@ export function serviceSearch(options: SearchOptionsDTO, callback: CallableFunct
     const archive: ArchiveInterface = inversifyContainer.getNamed<ArchiveInterface>(TYPES.ArchiveInterface, archiveName || ARCHIVE.DOCAPOSTE);
     archive
       .searchMany(options)
-      .then(docs => {
+      .then((docs) => {
         callback(null, docs);
       })
-      .catch(err => {
-        if (err instanceof BillError) callback(err);
-        else callback(new BillError(err));
+      .catch((err) => {
+        callback(err);
       });
   } catch (error) {
-    if (error instanceof BillError) callback(error);
-    else callback(new BillError(error));
+    callback(new BillError(error));
   }
 }

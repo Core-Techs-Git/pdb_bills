@@ -87,7 +87,7 @@ export class Docapost extends Archive {
       if (isNaN(+docID)) return reject(new ValidationError(`Invalid docID — ${docID}`));
 
       this.authenticate()
-        .then(token => {
+        .then((token) => {
           this.requester.post(
             {
               uri: '',
@@ -121,7 +121,7 @@ export class Docapost extends Archive {
             },
           );
         })
-        .catch(AuthError => {
+        .catch((AuthError) => {
           reject(AuthError);
         });
     });
@@ -136,7 +136,7 @@ export class Docapost extends Archive {
       }
 
       this.authenticate()
-        .then(token => {
+        .then((token) => {
           this.requester.post(
             {
               uri: '',
@@ -167,8 +167,7 @@ export class Docapost extends Archive {
             },
             (err, response, data) => {
               if (err) return reject(new BillError(err));
-
-              parseString(data, (err: Error, result) => {
+              parseString(data, (err, result) => {
                 if (err) return reject(new BillError(err));
 
                 try {
@@ -178,7 +177,7 @@ export class Docapost extends Archive {
                   let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
                   if (!documents) return resolve([]);
 
-                  documents.map(document => {
+                  documents.map((document) => {
                     document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
                     document.priceHt = document.MontantHT[0];
                   });
@@ -188,16 +187,16 @@ export class Docapost extends Archive {
                    * * If livraison, then remove all ENLEVEMENT (pickup) documents.
                    * TODO: Idealy we would do this in the soap request but 'livraison' documents are not identified.
                    */
-                  documents = documents.filter(doc => {
-                    if (query.typeLivraison.toUpperCase() === 'LIVRAISON') return !doc.TypeLivraison.includes('ENLEVEMENT');
-                    if (!query.dateFrom && !query.dateTo) return true;
-                    if (query.dateFrom && query.dateTo)
-                      return moment(doc.formatedDateDocument, 'DD/MM/YY').isBetween(
-                        moment(query.dateFrom, 'DD/MM/YY'),
-                        moment(query.dateTo, 'DD/MM/YY'),
-                      );
-                    if (query.dateFrom) return moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY'));
-                    if (query.dateTo) return moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY'));
+                  documents = documents.filter((doc) => {
+                    const required = [];
+
+                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON' || !query.typeLivraison)
+                      required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
+                    if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
+                    if (query.dateFrom) required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY')));
+                    if (query.dateTo) required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY')));
+
+                    return required.reduce((accumulator, currentValue) => accumulator && currentValue);
                   });
 
                   resolve(documents);
@@ -208,7 +207,7 @@ export class Docapost extends Archive {
             },
           );
         })
-        .catch(AuthError => {
+        .catch((AuthError) => {
           reject(AuthError);
         });
     });
