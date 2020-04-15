@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const {join} = require('path');
+const semver = require('semver');
+const execSync = require('child_process').execSync;
+const package = require(join(process.cwd(), 'package.json'));
+
+const color = {
+  Reset: '\x1b[0m',
+  Bright: '\x1b[1m',
+  Dim: '\x1b[2m',
+  Underscore: '\x1b[4m',
+  Blink: '\x1b[5m',
+  Reverse: '\x1b[7m',
+  Hidden: '\x1b[8m',
+  fg: {
+    Black: '\x1b[30m',
+    Red: '\x1b[31m',
+    Green: '\x1b[32m',
+    Yellow: '\x1b[33m',
+    Blue: '\x1b[34m',
+    Magenta: '\x1b[35m',
+    Cyan: '\x1b[36m',
+    White: '\x1b[37m',
+    Crimson: '\x1b[38m',
+  },
+  bg: {
+    Black: '\x1b[40m',
+    Red: '\x1b[41m',
+    Green: '\x1b[42m',
+    Yellow: '\x1b[43m',
+    Blue: '\x1b[44m',
+    Magenta: '\x1b[45m',
+    Cyan: '\x1b[46m',
+    White: '\x1b[47m',
+    Crimson: '\x1b[48m',
+  },
+};
+const currentVersion = package.version;
+let nextVersion = execSync('git branch --show-current').toString().trim();
+const branchName = nextVersion.includes('release') ? 'release/' : nextVersion.includes('hotfix') ? 'hotfix/' : null;
+
+if (!branchName) {
+  console.error(
+    `${color.fg.Red}You can released only branches named ${color.Bright}release/x.y.z${color.Reset}${color.fg.Red} or ${color.Bright}hotfix/x.y.z${color.Reset}`,
+  );
+  process.exit(1);
+}
+
+nextVersion = nextVersion.replace('release/', '').replace('hotfix/', '');
+
+if (!semver.valid(nextVersion)) {
+  console.error(
+    `${color.fg.Red}Branch named ${color.Bright}${branchName}${nextVersion}${color.Reset}${color.fg.Red} doesn't follow ${color.Bright}${branchName}x.y.z${color.Reset}${color.fg.Red} branch naming covention${color.Reset}`,
+  );
+  process.exit(1);
+}
+
+if (semver.lte(nextVersion, currentVersion)) {
+  console.error(
+    `${color.fg.Red}Release version ${color.Bright}${nextVersion}${color.Reset}${color.fg.Red} should be greater than current version ${color.Bright}${currentVersion}${color.Reset}`,
+  );
+  process.exit(1);
+}
+
+const releasedVersion = execSync(`npm version --no-git-tag-version ${nextVersion}`).toString().trim().replace('v', '');
+
+if (nextVersion !== releasedVersion) {
+  console.error(`${color.fg.Red}An error occured while updating ${color.Bright}package files${color.Reset}`);
+  process.exit(1);
+}
+
+execSync('auto-changelog --config .changelogrc');
+execSync(`git add package.json package-lock.json CHANGELOG.md && git commit -m "🎉: RELEASE ${nextVersion}"`);

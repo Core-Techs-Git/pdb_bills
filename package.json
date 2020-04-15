@@ -14,6 +14,7 @@
     "clean": "rimraf dist",
     "dev": "nodemon ./bin/dev.ts",
     "doc": "typedoc --tsconfig",
+    "release": "bin/release",
     "start": "npm run dev",
     "test": "jest --runInBand --silent --colors"
   },
@@ -58,6 +59,7 @@
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
     "@zerollup/ts-transform-paths": "^1.7.17",
+    "auto-changelog": "^2.0.0",
     "body-parser": "^1.19.0",
     "concurrently": "^5.1.0",
     "eslint": "^6.8.0",
@@ -72,6 +74,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
     "rimraf": "^3.0.2",
+    "semver": "^7.3.2",
     "ts-jest": "^25.3.1",
     "ts-node": "^8.8.2",
     "tsconfig-paths": "^3.9.0",

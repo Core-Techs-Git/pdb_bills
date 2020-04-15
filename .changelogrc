@@ -1,0 +1,13 @@
+{
+  "output": "CHANGELOG.md",
+  "template": ".changelog.hbs",
+  "remote": "origin",
+  "package": true,
+  "commitLimit": false,
+  "ignoreCommitPattern": "Add 1 git-crypt collaborator",
+  "tagPrefix": "",
+  "replaceText": {
+    "R-(\\d+)": "[R-$1](https://redmine.laplateforme.com/redmine/issues/$1)",
+    "#(\\d+)": "[#$1](https://github.com/Core-Techs-Git/pdb_bills/pull/$1)"
+  }
+}

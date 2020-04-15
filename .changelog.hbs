@@ -1,0 +1,47 @@
+<p align="center">
+  <a href="https://www.laplateforme.com/">
+    <img src="https://www.laplateforme.com/i/sites/default/files/2017-04/logo_pdb_bsl-1.jpg" alt="Pdb logo" width="200">
+  </a>
+</p>
+
+# PDB REQUESTER CHANGELOG
+
+All notable changes to this project will be documented in this file.
+
+{{#each releases}}
+
+## {{#if href}} [Release {{title}}]({{href}}) {{else}} Release {{title}} {{/if}} on {{isoDate}}
+
+{{#commit-list commits heading='![BUILD](https://img.shields.io/static/v1?label=&style=flat&message=BUILD&color=7f8c8d)' subject='^(📦|👷)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![DOCUMENTATION](https://img.shields.io/static/v1?label=&style=flat&message=DOCUMENTATION&color=9b59b6)' subject='^(📚|📜)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![FEATURES](https://img.shields.io/static/v1?label=&style=flat&message=FEATURES&color=2ecc71)' subject='^(🧩|💄)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![BUGS](https://img.shields.io/static/v1?label=&style=flat&message=BUGS&color=e74c3c)' subject='^🐛'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![ENHANCEMENTS](https://img.shields.io/static/v1?label=&style=flat&message=ENHANCEMENTS&color=f1c40f)' subject='^(⚡|♻️|🎨|👥)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)' subject='^(🧪|🔒|🔊|🔗)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![UNAVAILABLE](https://img.shields.io/static/v1?label=&style=flat&message=UNAVAILABLE&color=2c3e50)' subject='^(🚧|⏳)'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{#commit-list commits heading='![UNKNOWN TYPE](https://img.shields.io/static/v1?label=&style=flat&message=UNKNOWN%20TYPE&color=2c3e50)' exclude='^((.+?)(?:\((\w+)\))?!?:\s(.+?)(?:\s\((R-\d+)\))?)$'}}
+> {{subject}} [`{{shorthash}}`]({{href}})<br />
+{{/commit-list}}
+
+{{/each}}
