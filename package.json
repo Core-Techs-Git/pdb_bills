@@ -1,6 +1,6 @@
 {
   "name": "@core-techs-git/pdb_bills",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Bills requester for pdb apps.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

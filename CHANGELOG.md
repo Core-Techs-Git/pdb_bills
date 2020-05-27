@@ -8,22 +8,24 @@
 
 All notable changes to this project will be documented in this file.
 
+##  [Release 1.2.0](https://github.com/Core-Techs-Git/pdb_bills/compare/1.1.0...1.2.0)  on 2020-05-27
+
 ##  [Release 1.1.0](https://github.com/Core-Techs-Git/pdb_bills/compare/1.0.0...1.1.0)  on 2020-04-15
 
 ![BUILD](https://img.shields.io/static/v1?label=&style=flat&message=BUILD&color=7f8c8d)
 
-> 📦: AUTO GENERATE CHANGELOG WITH RELEASE SCRIPT [`2c74010`](https://github.com/Core-Techs-Git/pdb_bills/commit/2c74010ba8ba906c2e439c33fad00d7af6636f88)<br />
+> 📦: AUTO GENERATE CHANGELOG WITH RELEASE SCRIPT [`fc5a232`](https://github.com/Core-Techs-Git/pdb_bills/commit/fc5a232223c50485f350df0203c636c2ac31fd0d)<br />
 
 ![DOCUMENTATION](https://img.shields.io/static/v1?label=&style=flat&message=DOCUMENTATION&color=9b59b6)
 
-> 📚: UPDATE SOURCE CODE DOCUMENTATION [`3c6f4d7`](https://github.com/Core-Techs-Git/pdb_bills/commit/3c6f4d7cb0ca4def4589276dc55740e6e3a418ef)<br />
-> 📚: UPDATE PROJECT DOCUMENTATION [`90851ff`](https://github.com/Core-Techs-Git/pdb_bills/commit/90851ff7e0ed3847aa990cf71b7f7de20cf53023)<br />
+> 📚: UPDATE SOURCE CODE DOCUMENTATION [`20f0888`](https://github.com/Core-Techs-Git/pdb_bills/commit/20f08884114849a231b7405932993cf23f587d3e)<br />
+> 📚: UPDATE PROJECT DOCUMENTATION [`1ea6713`](https://github.com/Core-Techs-Git/pdb_bills/commit/1ea6713075eee71f3c3046e307da9c5bb5a46339)<br />
 
 ![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
 
-> 🔗: UPDATE DEPENDENCIES [`129d5d6`](https://github.com/Core-Techs-Git/pdb_bills/commit/129d5d656dda8834012b871cb2fbcb67d1805dfa)<br />
+> 🔗: UPDATE DEPENDENCIES [`af69c30`](https://github.com/Core-Techs-Git/pdb_bills/commit/af69c307f88f38a58dc1366a9be0c5eddfef42a3)<br />
 > 🔗(core): FIX SECURITY VULNERABILITIE [`48a1a4c`](https://github.com/Core-Techs-Git/pdb_bills/commit/48a1a4c2c972ce94814ec3680ba4645d842fbbf4)<br />
-> 🔗: ADD LINTER TO COMMIT MESSAGES [`45e4c82`](https://github.com/Core-Techs-Git/pdb_bills/commit/45e4c826100db2d87ce61158645c3895ddb9f0a7)<br />
+> 🔗: ADD LINTER TO COMMIT MESSAGES [`e7837fd`](https://github.com/Core-Techs-Git/pdb_bills/commit/e7837fd262d9efde709bae6884a8e28f32b02703)<br />
 
 ##  Release 1.0.0  on 2019-11-29
 
