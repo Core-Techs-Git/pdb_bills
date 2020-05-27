@@ -185,9 +185,9 @@ let Docapost = class Docapost extends Archive_1.Archive {
                                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT')
                                         required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
                                     if (query.dateFrom)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, 'DD/MM/YY')));
+                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, 'DD/MM/YY').subtract(1, 'day')));
                                     if (query.dateTo)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, 'DD/MM/YY')));
+                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, 'DD/MM/YY').add(1, 'day')));
                                     return required.reduce((accumulator, currentValue) => accumulator && currentValue);
                                 });
                                 resolve(documents);
