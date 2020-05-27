@@ -193,8 +193,10 @@ export class Docapost extends Archive {
                     if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON' || !query.typeLivraison)
                       required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
-                    if (query.dateFrom) required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY')));
-                    if (query.dateTo) required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY')));
+                    if (query.dateFrom)
+                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY').subtract(1, 'day')));
+                    if (query.dateTo)
+                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY').add(1, 'day')));
 
                     return required.reduce((accumulator, currentValue) => accumulator && currentValue);
                   });
