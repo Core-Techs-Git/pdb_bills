@@ -4,11 +4,7 @@ module.exports = {
     'header-min-length': [2, 'always', 0],
     'header-max-length': [2, 'always', 72],
     'type-empty': [2, 'never'],
-    'type-enum': [
-      2,
-      'always',
-      ['🎬', '🎉', '🔄', '📦', '👷', '📚', '🧪', '🐛', '🧩', '💄', '⚡', '🔒', '🔊', '🔗', '♻️', '🎨', '🚧', '⏳', '📜', '👥'],
-    ],
+    'type-enum': [2, 'always', ['🎬', '🎉', '📦', '👷', '📚', '🧪', '🐛', '🧩', '💄', '⚡', '🔒', '🔊', '🔗', '♻️', '🎨', '🚧', '⏳', '📜', '👥']],
     'scope-enum': [2, 'always', ['core', 'error', 'model', 'service']],
     'scope-case': [2, 'always', 'lower-case'],
     'subject-empty': [2, 'never'],
