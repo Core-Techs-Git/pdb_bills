@@ -154,8 +154,8 @@ let Docapost = class Docapost extends Archive_1.Archive {
                         ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
                         ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
                         ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
-                        ${query.dateFrom ? `<DateDebutRecherche_from>${query.dateFrom}</DateDebutRecherche_from>` : ''}
-                        ${query.dateTo ? `<DateFinRecherche_to>${query.dateTo}</DateFinRecherche_to>` : ''}
+                        ${query.dateFrom ? `<DateDebutRecherche_from>${moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>` : ''}
+                        ${query.dateTo ? `<DateFinRecherche_to>${moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>` : ''}
                         ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
                       </metadata>
                     </soap:serviceSEARCH>
@@ -185,9 +185,9 @@ let Docapost = class Docapost extends Archive_1.Archive {
                                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT')
                                         required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
                                     if (query.dateFrom)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, 'DD/MM/YY').subtract(1, 'day')));
+                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).subtract(1, 'day')));
                                     if (query.dateTo)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, 'DD/MM/YY').add(1, 'day')));
+                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).add(1, 'day')));
                                     return required.reduce((accumulator, currentValue) => accumulator && currentValue);
                                 });
                                 resolve(documents);

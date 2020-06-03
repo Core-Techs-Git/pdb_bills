@@ -5,10 +5,12 @@
  */
 
 import {injectable} from 'inversify';
+import m from 'moment';
 import v from 'validator';
 
 import {SearchOptionsDTO} from '@/model';
 import {ValidationError} from '@/error';
+import {VALID_DATE_FORMAT} from '@/const/validators';
 import {Validator} from '@/service/validator/Validator';
 
 /**
@@ -23,7 +25,7 @@ export class SearchOptionsDTOValidator extends Validator {
       throw new ValidationError(`Invalid priceFrom option – ${data.priceFrom}`);
     if (data.priceTo && !(v.isFloat(data.priceTo) || v.isInt(data.priceTo))) throw new ValidationError(`Invalid priceTo option – ${data.priceTo}`);
     if (data.code_depot && !v.isInt(data.code_depot)) throw new ValidationError(`Invalid code_depot option – ${data.code_depot}`);
-    if (data.dateFrom && !v.matches(data.dateFrom, /\d{2}\/\d{2}\/\d{2}/i)) throw new ValidationError(`Invalid dateFrom option – ${data.dateFrom}`);
-    if (data.dateTo && !v.matches(data.dateTo, /\d{2}\/\d{2}\/\d{2}/i)) throw new ValidationError(`Invalid dateTo option – ${data.dateTo}`);
+    if (data.dateFrom && !m(data.dateFrom, VALID_DATE_FORMAT, true).isValid()) throw new ValidationError(`Invalid dateFrom option – ${data.dateFrom}`);
+    if (data.dateTo && !m(data.dateTo, VALID_DATE_FORMAT, true).isValid()) throw new ValidationError(`Invalid dateTo option – ${data.dateTo}`);
   }
 }
