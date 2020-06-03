@@ -9,7 +9,7 @@ import {injectable, inject, named} from 'inversify';
 import {RequestAPI, Request, CoreOptions, RequiredUriUrl} from 'request';
 
 import {Archive} from '@/service/archive/Archive';
-import {ARCHIVE, TYPES, VALIDATORS} from '@/const';
+import {ARCHIVE, TYPES, VALIDATORS, VALID_DATE_FORMAT} from '@/const';
 import {ValidatorInterface} from '@/service/validator';
 import {ConfigurationInterface} from '@/service/Configuration';
 import {DocumentDTO, SearchOptionsDTO, ServiceConfiguration} from '@/model';
@@ -157,8 +157,8 @@ export class Docapost extends Archive {
                         ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
                         ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
                         ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
-                        ${query.dateFrom ? `<DateDebutRecherche_from>${query.dateFrom}</DateDebutRecherche_from>` : ''}
-                        ${query.dateTo ? `<DateFinRecherche_to>${query.dateTo}</DateFinRecherche_to>` : ''}
+                        ${query.dateFrom ? `<DateDebutRecherche_from>${moment(query.dateFrom, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>` : ''}
+                        ${query.dateTo ? `<DateFinRecherche_to>${moment(query.dateTo, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>` : ''}
                         ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
                       </metadata>
                     </soap:serviceSEARCH>
@@ -194,9 +194,9 @@ export class Docapost extends Archive {
                       required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
                     if (query.dateFrom)
-                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, 'DD/MM/YY').subtract(1, 'day')));
+                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, VALID_DATE_FORMAT, true).subtract(1, 'day')));
                     if (query.dateTo)
-                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, 'DD/MM/YY').add(1, 'day')));
+                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, VALID_DATE_FORMAT, true).add(1, 'day')));
 
                     return required.reduce((accumulator, currentValue) => accumulator && currentValue);
                   });

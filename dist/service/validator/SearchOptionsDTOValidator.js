@@ -10,8 +10,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const inversify_1 = require("inversify");
+const moment_1 = __importDefault(require("moment"));
 const validator_1 = __importDefault(require("validator"));
 const error_1 = require("../../error");
+const validators_1 = require("../../const/validators");
 const Validator_1 = require("./Validator");
 let SearchOptionsDTOValidator = class SearchOptionsDTOValidator extends Validator_1.Validator {
     validate(data) {
@@ -25,9 +27,9 @@ let SearchOptionsDTOValidator = class SearchOptionsDTOValidator extends Validato
             throw new error_1.ValidationError(`Invalid priceTo option – ${data.priceTo}`);
         if (data.code_depot && !validator_1.default.isInt(data.code_depot))
             throw new error_1.ValidationError(`Invalid code_depot option – ${data.code_depot}`);
-        if (data.dateFrom && !validator_1.default.matches(data.dateFrom, /\d{2}\/\d{2}\/\d{2}/i))
+        if (data.dateFrom && !moment_1.default(data.dateFrom, validators_1.VALID_DATE_FORMAT, true).isValid())
             throw new error_1.ValidationError(`Invalid dateFrom option – ${data.dateFrom}`);
-        if (data.dateTo && !validator_1.default.matches(data.dateTo, /\d{2}\/\d{2}\/\d{2}/i))
+        if (data.dateTo && !moment_1.default(data.dateTo, validators_1.VALID_DATE_FORMAT, true).isValid())
             throw new error_1.ValidationError(`Invalid dateTo option – ${data.dateTo}`);
     }
 };
