@@ -190,8 +190,8 @@ export class Docapost extends Archive {
                   documents = documents.filter((doc) => {
                     const required = [];
 
-                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON' || !query.typeLivraison)
-                      required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
+                    if (!query.typeLivraison) required.push(true);
+                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON') required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
                     if (query.dateFrom)
                       required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, VALID_DATE_FORMAT, true).subtract(1, 'day')));

@@ -180,7 +180,9 @@ let Docapost = class Docapost extends Archive_1.Archive {
                                 });
                                 documents = documents.filter((doc) => {
                                     const required = [];
-                                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON' || !query.typeLivraison)
+                                    if (!query.typeLivraison)
+                                        required.push(true);
+                                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON')
                                         required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
                                     if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT')
                                         required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
