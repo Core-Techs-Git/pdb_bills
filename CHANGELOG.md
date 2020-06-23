@@ -8,15 +8,21 @@
 
 All notable changes to this project will be documented in this file.
 
+##  [Release 1.2.2](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.1...1.2.2)  on 2020-06-23
+
+![BUGS](https://img.shields.io/static/v1?label=&style=flat&message=BUGS&color=e74c3c)
+
+> 🐛: FIX MISSING BILLS DUE TO FILTER ([R-12527](https://redmine.laplateforme.com/redmine/issues/12527)) [`de07427`](https://github.com/Core-Techs-Git/pdb_bills/commit/de0742714f7c9134cb043cb03d0a6846849545d2)<br />
+
 ##  [Release 1.2.1](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.0...1.2.1)  on 2020-06-03
 
 ![BUGS](https://img.shields.io/static/v1?label=&style=flat&message=BUGS&color=e74c3c)
 
-> 🐛: FIX DATE FILTER FORMAT [`152eeb0`](https://github.com/Core-Techs-Git/pdb_bills/commit/152eeb0acde5cafa0a9a6613ad8125013c86bdc1)<br />
+> 🐛: FIX DATE FILTER FORMAT [`aa7c8fc`](https://github.com/Core-Techs-Git/pdb_bills/commit/aa7c8fc47c67304caff31f39a4ed56ef16cbf5b0)<br />
 
 ![ENHANCEMENTS](https://img.shields.io/static/v1?label=&style=flat&message=ENHANCEMENTS&color=f1c40f)
 
-> ♻️: FIX DEPENDENCIES VULNERABILITIES [`4db13a3`](https://github.com/Core-Techs-Git/pdb_bills/commit/4db13a32595be5012c3a7a7a463b7dd8eb9fc1c7)<br />
+> ♻️: FIX DEPENDENCIES VULNERABILITIES [`a5327ae`](https://github.com/Core-Techs-Git/pdb_bills/commit/a5327ae00dcb2c4f16947919ecb48268f376ffc3)<br />
 
 ##  [Release 1.2.0](https://github.com/Core-Techs-Git/pdb_bills/compare/1.1.0...1.2.0)  on 2020-05-27
 
