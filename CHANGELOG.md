@@ -8,11 +8,17 @@
 
 All notable changes to this project will be documented in this file.
 
+##  [Release 1.2.3](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.2...1.2.3)  on 2020-07-27
+
+![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
+
+> 🔗: UPDATE PDB_REQUESTER ([R-12807](https://redmine.laplateforme.com/redmine/issues/12807)) [`d0ad121`](https://github.com/Core-Techs-Git/pdb_bills/commit/d0ad1213cbbf63b750d6952c13f52abc8105507f)<br />
+
 ##  [Release 1.2.2](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.1...1.2.2)  on 2020-06-23
 
 ![BUGS](https://img.shields.io/static/v1?label=&style=flat&message=BUGS&color=e74c3c)
 
-> 🐛: FIX MISSING BILLS DUE TO FILTER ([R-12527](https://redmine.laplateforme.com/redmine/issues/12527)) [`de07427`](https://github.com/Core-Techs-Git/pdb_bills/commit/de0742714f7c9134cb043cb03d0a6846849545d2)<br />
+> 🐛: FIX MISSING BILLS DUE TO FILTER ([R-12527](https://redmine.laplateforme.com/redmine/issues/12527)) [`e146fd2`](https://github.com/Core-Techs-Git/pdb_bills/commit/e146fd27f6c3975b5b8b5df3c6a1b2c6c7c406be)<br />
 
 ##  [Release 1.2.1](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.0...1.2.1)  on 2020-06-03
 
