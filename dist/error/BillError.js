@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.BillError = void 0;
 class BillError extends Error {
     constructor(info) {
         if (typeof info === 'string')

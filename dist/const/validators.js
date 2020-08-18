@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.VALID_DATE_FORMAT = exports.VALIDATORS = void 0;
 exports.VALIDATORS = {
     SEARCH_OPTIONS_DTO: 'SearchOptionsDTO',
 };
