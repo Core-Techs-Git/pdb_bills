@@ -8,11 +8,21 @@
 
 All notable changes to this project will be documented in this file.
 
+##  [Release 1.2.4](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.3...1.2.4)  on 2020-08-18
+
+![ENHANCEMENTS](https://img.shields.io/static/v1?label=&style=flat&message=ENHANCEMENTS&color=f1c40f)
+
+> 👥: ADD CONTRIBUTERS FOR ENCRYPTED FILES [`39e0e2b`](https://github.com/Core-Techs-Git/pdb_bills/commit/39e0e2b9001e99206c719a1d5d54a89f97882cb7)<br />
+
+![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
+
+> 🔗: UPDATE DEPENDENCIES TO FIX SECURITY ISSUE [`40e2580`](https://github.com/Core-Techs-Git/pdb_bills/commit/40e25805d25b7e3ad0b331ea62aaba78220e48b5)<br />
+
 ##  [Release 1.2.3](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.2...1.2.3)  on 2020-07-27
 
 ![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
 
-> 🔗: UPDATE PDB_REQUESTER ([R-12807](https://redmine.laplateforme.com/redmine/issues/12807)) [`d0ad121`](https://github.com/Core-Techs-Git/pdb_bills/commit/d0ad1213cbbf63b750d6952c13f52abc8105507f)<br />
+> 🔗: UPDATE PDB_REQUESTER ([R-12807](https://redmine.laplateforme.com/redmine/issues/12807)) [`0017571`](https://github.com/Core-Techs-Git/pdb_bills/commit/00175714b2772229b52c828203ba5f16b935ddd9)<br />
 
 ##  [Release 1.2.2](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.1...1.2.2)  on 2020-06-23
 
