@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.serviceSearch = exports.serviceDoc = void 0;
 require("reflect-metadata");
 const const_1 = require("./const");
 const lib_1 = require("./lib");
