@@ -11,4 +11,5 @@ export declare class Docapost extends Archive {
     protected authenticate(): Promise<string>;
     searchOne(docID: number): Promise<string>;
     searchMany(query: SearchOptionsDTO): Promise<Array<DocumentDTO>>;
+    private getBillsList;
 }
