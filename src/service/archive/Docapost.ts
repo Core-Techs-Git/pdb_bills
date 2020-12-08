@@ -136,82 +136,113 @@ export class Docapost extends Archive {
       }
 
       this.authenticate()
-        .then((token) => {
-          this.requester.post(
-            {
-              uri: '',
-              headers: {
-                'Content-type': 'text/xml',
-              },
-              body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
-                <soapenv:Header/>
-                  <soapenv:Body>
-                    <soap:serviceSEARCH>
-                      <token>${token}</token>
-                      <start>${query.start || 1}</start>
-                      <sort_cr>DateDocument</sort_cr>
-                      <sort_dir>desc</sort_dir>
-                      <metadata>
-                        ${query.numDocument ? `<NumDocument>${query.numDocument}</NumDocument>` : ''}
-                        ${query.company_id ? `<CodeClientCourt>${query.company_id}</CodeClientCourt>` : ''}
-                        ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
-                        ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
-                        ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
-                        ${query.dateFrom ? `<DateDebutRecherche_from>${moment(query.dateFrom, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>` : ''}
-                        ${query.dateTo ? `<DateFinRecherche_to>${moment(query.dateTo, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>` : ''}
-                        ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
-                      </metadata>
-                    </soap:serviceSEARCH>
-                  </soapenv:Body>
-                </soapenv:Envelope>`,
-            },
-            (err, response, data) => {
-              if (err) return reject(new BillError(err));
-              parseString(data, (err, result) => {
-                if (err) return reject(new BillError(err));
+        .then(async (token) => {
+          let start = 1;
+          const bills: Array<DocumentDTO> = [];
+          let res: {hits: number; bills: Array<DocumentDTO>};
 
-                try {
-                  const message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
-                  if (message === 'token invalid, authentication failed.') return reject(new AuthenticationError(message));
+          try {
+            do {
+              res = await this.getBillsList(query, token, start);
+              bills.push(...res.bills);
+              start += 100;
+            } while (res.hits === 100);
 
-                  let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
-                  if (!documents) return resolve([]);
-
-                  documents.map((document) => {
-                    document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
-                    document.priceHt = document.MontantHT[0];
-                  });
-
-                  /**
-                   * * Filter according to provided date cause docapost doesn't work correctly.
-                   * * If livraison, then remove all ENLEVEMENT (pickup) documents.
-                   * TODO: Idealy we would do this in the soap request but 'livraison' documents are not identified.
-                   */
-                  documents = documents.filter((doc) => {
-                    const required = [];
-
-                    if (!query.typeLivraison) required.push(true);
-                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON') required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
-                    if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
-                    if (query.dateFrom)
-                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, VALID_DATE_FORMAT, true).subtract(1, 'day')));
-                    if (query.dateTo)
-                      required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, VALID_DATE_FORMAT, true).add(1, 'day')));
-
-                    return required.reduce((accumulator, currentValue) => accumulator && currentValue);
-                  });
-
-                  resolve(documents);
-                } catch (error) {
-                  reject(new BillError(error));
-                }
-              });
-            },
-          );
+            resolve(bills);
+          } catch (error) {
+            reject(error instanceof BillError ? error : new BillError(error));
+          }
         })
         .catch((AuthError) => {
           reject(AuthError);
         });
+    });
+  }
+
+  private async getBillsList(query: SearchOptionsDTO, token: string, start: number): Promise<{hits: number; bills: Array<DocumentDTO>}> {
+    return new Promise<{hits: number; bills: Array<DocumentDTO>}>((resolve, reject): void => {
+      this.requester.post(
+        {
+          uri: '',
+          headers: {
+            'Content-type': 'text/xml',
+          },
+          body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
+          <soapenv:Header/>
+            <soapenv:Body>
+              <soap:serviceSEARCH>
+                <token>${token}</token>
+                <start>${start}</start>
+                <sort_cr>DateDocument</sort_cr>
+                <sort_dir>desc</sort_dir>
+                <metadata>
+                  ${query.numDocument ? `<NumDocument>${query.numDocument}</NumDocument>` : ''}
+                  ${query.company_id ? `<CodeClientCourt>${query.company_id}</CodeClientCourt>` : ''}
+                  ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
+                  ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
+                  ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
+                  ${
+                    query.dateFrom
+                      ? `<DateDebutRecherche_from>${moment(query.dateFrom, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>`
+                      : ''
+                  }
+                  ${
+                    query.dateTo
+                      ? `<DateFinRecherche_to>${moment(query.dateTo, VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>`
+                      : ''
+                  }
+                  ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
+                </metadata>
+              </soap:serviceSEARCH>
+            </soapenv:Body>
+          </soapenv:Envelope>`,
+        },
+        (err, response, data) => {
+          if (err) return reject(new BillError(err));
+          parseString(data, (err, result) => {
+            if (err) return reject(new BillError(err));
+
+            try {
+              const message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
+              if (message === 'token invalid, authentication failed.') return reject(new AuthenticationError(message));
+
+              const hits: number = +result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].hits_returned;
+              let documents: Array<DocumentDTO> = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
+              if (!documents) return resolve({hits: 0, bills: []});
+
+              documents.map((document) => {
+                document.formatedDateDocument = moment(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
+                document.priceHt = document.MontantHT[0];
+              });
+
+              /**
+               * * Filter according to provided date cause docapost doesn't work correctly.
+               * * If livraison, then remove all ENLEVEMENT (pickup) documents.
+               * TODO: Idealy we would do this in the soap request but 'livraison' documents are not identified.
+               */
+              documents = documents.filter((doc) => {
+                const required = [];
+
+                if (!query.typeLivraison) required.push(true);
+                if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON') required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
+                if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT') required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
+                if (query.dateFrom)
+                  required.push(
+                    moment(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment(query.dateFrom, VALID_DATE_FORMAT, true).subtract(1, 'day')),
+                  );
+                if (query.dateTo)
+                  required.push(moment(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment(query.dateTo, VALID_DATE_FORMAT, true).add(1, 'day')));
+
+                return required.reduce((accumulator, currentValue) => accumulator && currentValue);
+              });
+
+              resolve({hits, bills: documents});
+            } catch (error) {
+              reject(new BillError(error));
+            }
+          });
+        },
+      );
     });
   }
 }

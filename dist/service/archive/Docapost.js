@@ -135,74 +135,99 @@ let Docapost = class Docapost extends Archive_1.Archive {
                     return reject(validationError);
                 }
                 this.authenticate()
-                    .then((token) => {
-                    this.requester.post({
-                        uri: '',
-                        headers: {
-                            'Content-type': 'text/xml',
-                        },
-                        body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
-                <soapenv:Header/>
-                  <soapenv:Body>
-                    <soap:serviceSEARCH>
-                      <token>${token}</token>
-                      <start>${query.start || 1}</start>
-                      <sort_cr>DateDocument</sort_cr>
-                      <sort_dir>desc</sort_dir>
-                      <metadata>
-                        ${query.numDocument ? `<NumDocument>${query.numDocument}</NumDocument>` : ''}
-                        ${query.company_id ? `<CodeClientCourt>${query.company_id}</CodeClientCourt>` : ''}
-                        ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
-                        ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
-                        ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
-                        ${query.dateFrom ? `<DateDebutRecherche_from>${moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>` : ''}
-                        ${query.dateTo ? `<DateFinRecherche_to>${moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>` : ''}
-                        ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
-                      </metadata>
-                    </soap:serviceSEARCH>
-                  </soapenv:Body>
-                </soapenv:Envelope>`,
-                    }, (err, response, data) => {
-                        if (err)
-                            return reject(new error_1.BillError(err));
-                        xml2js_1.parseString(data, (err, result) => {
-                            if (err)
-                                return reject(new error_1.BillError(err));
-                            try {
-                                const message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
-                                if (message === 'token invalid, authentication failed.')
-                                    return reject(new error_1.AuthenticationError(message));
-                                let documents = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
-                                if (!documents)
-                                    return resolve([]);
-                                documents.map((document) => {
-                                    document.formatedDateDocument = moment_1.default(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
-                                    document.priceHt = document.MontantHT[0];
-                                });
-                                documents = documents.filter((doc) => {
-                                    const required = [];
-                                    if (!query.typeLivraison)
-                                        required.push(true);
-                                    if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON')
-                                        required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
-                                    if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT')
-                                        required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
-                                    if (query.dateFrom)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).subtract(1, 'day')));
-                                    if (query.dateTo)
-                                        required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).add(1, 'day')));
-                                    return required.reduce((accumulator, currentValue) => accumulator && currentValue);
-                                });
-                                resolve(documents);
-                            }
-                            catch (error) {
-                                reject(new error_1.BillError(error));
-                            }
-                        });
-                    });
-                })
+                    .then((token) => __awaiter(this, void 0, void 0, function* () {
+                    let start = 1;
+                    const bills = [];
+                    let res;
+                    try {
+                        do {
+                            res = yield this.getBillsList(query, token, start);
+                            bills.push(...res.bills);
+                            start += 100;
+                        } while (res.hits === 100);
+                        resolve(bills);
+                    }
+                    catch (error) {
+                        reject(error instanceof error_1.BillError ? error : new error_1.BillError(error));
+                    }
+                }))
                     .catch((AuthError) => {
                     reject(AuthError);
+                });
+            });
+        });
+    }
+    getBillsList(query, token, start) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.requester.post({
+                    uri: '',
+                    headers: {
+                        'Content-type': 'text/xml',
+                    },
+                    body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap="http://archiv-e-service/soap/">
+          <soapenv:Header/>
+            <soapenv:Body>
+              <soap:serviceSEARCH>
+                <token>${token}</token>
+                <start>${start}</start>
+                <sort_cr>DateDocument</sort_cr>
+                <sort_dir>desc</sort_dir>
+                <metadata>
+                  ${query.numDocument ? `<NumDocument>${query.numDocument}</NumDocument>` : ''}
+                  ${query.company_id ? `<CodeClientCourt>${query.company_id}</CodeClientCourt>` : ''}
+                  ${query.code_depot ? `<CodeDepot>${query.code_depot}</CodeDepot>` : ''}
+                  ${query.priceFrom ? `<MontantRecherche_minimum>${query.priceFrom}</MontantRecherche_minimum>` : ''}
+                  ${query.priceTo ? `<MontantRecherche_maximum>${query.priceTo}</MontantRecherche_maximum>` : ''}
+                  ${query.dateFrom
+                        ? `<DateDebutRecherche_from>${moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateDebutRecherche_from>`
+                        : ''}
+                  ${query.dateTo
+                        ? `<DateFinRecherche_to>${moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).format('YYYY-MM-DD')}</DateFinRecherche_to>`
+                        : ''}
+                  ${query.typeLivraison === 'ENLEVEMENT' ? '<TypeLivraison>ENLEVEMENT</TypeLivraison>' : ''}
+                </metadata>
+              </soap:serviceSEARCH>
+            </soapenv:Body>
+          </soapenv:Envelope>`,
+                }, (err, response, data) => {
+                    if (err)
+                        return reject(new error_1.BillError(err));
+                    xml2js_1.parseString(data, (err, result) => {
+                        if (err)
+                            return reject(new error_1.BillError(err));
+                        try {
+                            const message = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].message[0];
+                            if (message === 'token invalid, authentication failed.')
+                                return reject(new error_1.AuthenticationError(message));
+                            const hits = +result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].hits_returned;
+                            let documents = result['SOAP-ENV:Envelope']['SOAP-ENV:Body'][0]['ns1:serviceSEARCHRes'][0].dataset[0].data;
+                            if (!documents)
+                                return resolve({ hits: 0, bills: [] });
+                            documents.map((document) => {
+                                document.formatedDateDocument = moment_1.default(document.DateDocument[0], 'YYYY-MM-DD').format('DD/MM/YY');
+                                document.priceHt = document.MontantHT[0];
+                            });
+                            documents = documents.filter((doc) => {
+                                const required = [];
+                                if (!query.typeLivraison)
+                                    required.push(true);
+                                if ((query.typeLivraison || '').toUpperCase() === 'LIVRAISON')
+                                    required.push(!doc.TypeLivraison.includes('ENLEVEMENT'));
+                                if ((query.typeLivraison || '').toUpperCase() === 'ENLEVEMENT')
+                                    required.push(doc.TypeLivraison.includes('ENLEVEMENT'));
+                                if (query.dateFrom)
+                                    required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isAfter(moment_1.default(query.dateFrom, const_1.VALID_DATE_FORMAT, true).subtract(1, 'day')));
+                                if (query.dateTo)
+                                    required.push(moment_1.default(doc.formatedDateDocument, 'DD/MM/YY').isBefore(moment_1.default(query.dateTo, const_1.VALID_DATE_FORMAT, true).add(1, 'day')));
+                                return required.reduce((accumulator, currentValue) => accumulator && currentValue);
+                            });
+                            resolve({ hits, bills: documents });
+                        }
+                        catch (error) {
+                            reject(new error_1.BillError(error));
+                        }
+                    });
                 });
             });
         });
