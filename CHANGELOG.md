@@ -8,15 +8,23 @@
 
 All notable changes to this project will be documented in this file.
 
+##  [Release 1.3.0](https://github.com/Core-Techs-Git/pdb_bills/compare/1.3.0-rc.1...1.3.0)  on 2020-12-18
+
+![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
+
+> 🔗: UPDATE DEPENDENCIES TO FIX SECURITY ISSUE [`8fc1136`](https://github.com/Core-Techs-Git/pdb_bills/commit/8fc11361ff569c6c503481065c5759caca9a3445)<br />
+
+##  [Release 1.3.0-rc.1](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.4...1.3.0-rc.1)  on 2020-12-08
+
 ##  [Release 1.2.4](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.3...1.2.4)  on 2020-08-18
 
 ![ENHANCEMENTS](https://img.shields.io/static/v1?label=&style=flat&message=ENHANCEMENTS&color=f1c40f)
 
-> 👥: ADD CONTRIBUTERS FOR ENCRYPTED FILES [`39e0e2b`](https://github.com/Core-Techs-Git/pdb_bills/commit/39e0e2b9001e99206c719a1d5d54a89f97882cb7)<br />
+> 👥: ADD CONTRIBUTERS FOR ENCRYPTED FILES [`3a440bd`](https://github.com/Core-Techs-Git/pdb_bills/commit/3a440bd195eb74074e09959740ee72b3f939a4bd)<br />
 
 ![SECURITY](https://img.shields.io/static/v1?label=&style=flat&message=SECURITY&color=f39c12)
 
-> 🔗: UPDATE DEPENDENCIES TO FIX SECURITY ISSUE [`40e2580`](https://github.com/Core-Techs-Git/pdb_bills/commit/40e25805d25b7e3ad0b331ea62aaba78220e48b5)<br />
+> 🔗: UPDATE DEPENDENCIES TO FIX SECURITY ISSUE [`ba2707c`](https://github.com/Core-Techs-Git/pdb_bills/commit/ba2707c2307984d3b89fccb3bc13a90a4d2fb243)<br />
 
 ##  [Release 1.2.3](https://github.com/Core-Techs-Git/pdb_bills/compare/1.2.2...1.2.3)  on 2020-07-27
 
