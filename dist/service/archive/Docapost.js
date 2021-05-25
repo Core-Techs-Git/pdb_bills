@@ -98,7 +98,7 @@ let Docapost = class Docapost extends Archive_1.Archive {
                   <soa:token>${token}</soa:token>
                   <soa:docset><soa:doc>
                   <soa:id>${docID}</soa:id>
-                  <soa:duplicata>true</soa:duplicata></soa:doc></soa:docset></soa:serviceDOC>
+                  <soa:duplicata>1</soa:duplicata></soa:doc></soa:docset></soa:serviceDOC>
                   </x:Body></x:Envelope>`,
                     }, (err, response, data) => {
                         if (err)
